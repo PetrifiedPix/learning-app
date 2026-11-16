@@ -85,6 +85,9 @@
     redo: '<path d="M4 12a8 8 0 1 0 2.3-5.6L4 8.7"/><path d="M4 4v4.7h4.7"/>',
     page: '<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/>',
     external: '<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    book: '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19"/>',
+    course: '<path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.2V16c0 1.2 2.2 3 5 3s5-1.8 5-3v-4.8"/>',
   };
   function svg(name, cls) {
     return '<svg class="' + (cls || "ic") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -206,6 +209,7 @@
     const [sid, tid, mode] = parts;
 
     if (!sid) return showHome();
+    if (sid === "ideen") return showIdeas();
     const subject = SUBJECTS.find((s) => s.id === sid);
     if (!subject) return showNotFound();
     if (!tid) return showSubject(subject);
@@ -241,18 +245,24 @@
 
   // ---------- Screen 1: Home ----------
   // Start screen: a calm "Heute" overview with real progress numbers.
-  // Same word for everyone all day: pick a card topic and a card from today's date.
+  // Same word for everyone all day. It comes from the funny list in
+  // subjects/wort-des-tages.js (not from the vocabulary); without it, from a card topic.
   function wordOfTheDay() {
+    const day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+    const fun = window.FUN_WORDS || [];
+    if (fun.length) {
+      const [lang, front, back] = fun[(day * 7919) % fun.length];
+      return Promise.resolve({ card: { front, back }, labels: [lang, "Deutsch"], src: "Nicht im Unterricht" });
+    }
     const pool = [];
     SUBJECTS.forEach((s) => (s.topics || []).forEach((t) => { if (t.file) pool.push([s, t]); }));
     if (!pool.length) return Promise.reject(new Error("no topics"));
-    const day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
     const [s, t] = pool[day % pool.length];
     return loadTopic(s, t).then((data) => {
       const cards = normCards(data.cards);
       if (!cards.length) throw new Error("no cards");
       const c = cards[(day * 7919) % cards.length];
-      return { subject: s, topic: t, card: c, labels: data.labels || ["Vorderseite", "Rückseite"] };
+      return { card: c, labels: data.labels || ["Vorderseite", "Rückseite"], src: s.name + " · " + t.name };
     });
   }
 
@@ -309,6 +319,22 @@
         '<span class="row-end">' + done + "/" + topics.length + svg("chev", "chev") + "</span></a></li>";
     }).join("");
 
+    // The ideas box is always the last row, after every subject.
+    const ideas = '<li><a class="row subject-row idea-row" href="#/ideen">' +
+      '<span class="mono idea-mono" aria-hidden="true">' + svg("plus", "plus") + "</span>" +
+      '<span class="row-text"><span class="row-title">Ideen</span>' +
+      '<span class="row-sub">Vorschläge und Wünsche für diese Seite</span></span>' +
+      '<span class="row-end">' + svg("chev", "chev") + "</span></a></li>";
+
+    const owner = window.SITE_OWNER || {};
+    const quick = window.QUICKLINKS || [];
+    const footer = '<footer class="home-foot reveal" style="--i:6">' +
+      (owner.name ? '<div class="foot-owner"><span class="foot-name">' + esc(owner.name) + "</span>" +
+        (owner.mail ? '<a href="mailto:' + esc(owner.mail) + '">' + esc(owner.mail) + "</a>" : "") + "</div>" : "") +
+      (quick.length ? '<nav class="foot-links" aria-label="Quicklinks"><span class="foot-label">Quicklinks</span><ul>' +
+        quick.map((q) => '<li><a href="' + esc(q.url) + '" target="_blank" rel="noopener">' + esc(q.name) + "</a></li>").join("") +
+        "</ul></nav>" : "") + "</footer>";
+
     render('<div class="home">' +
       '<header class="home-top reveal" style="--i:0"><span class="brand"><span class="brand-mark" aria-hidden="true">6a</span>Lernübungen</span>' +
       '<span class="home-date">' + esc(date) + "</span></header>" +
@@ -317,9 +343,7 @@
       stats +
       '<div class="home-grid"><section class="home-col">' + cont +
       '<h2 class="section-label reveal" style="--i:4">Fächer</h2>' +
-      (SUBJECTS.length
-        ? '<ul class="rows reveal" style="--i:5">' + subjects + "</ul>"
-        : notice("Noch keine Fächer.", "Füge eines in <code>subjects/index.js</code> hinzu.")) +
+      '<ul class="rows reveal" style="--i:5">' + subjects + ideas + "</ul>" +
       "</section>" +
       '<aside class="wotd-card reveal" style="--i:4"><div class="wotd-head"><h2 class="section-label">Wort des Tages</h2>' +
       '<span class="wotd-src"></span></div>' +
@@ -328,7 +352,7 @@
       '<span class="face-text">¡Hola!</span><span class="face-hint">Antippen zum Umdrehen</span></div>' +
       '<div class="face face-back" aria-hidden="true"><span class="face-label">Deutsch</span>' +
       '<span class="face-text">Hallo!</span></div></div></button></aside>' +
-      "</div></div>");
+      "</div>" + footer + "</div>");
 
     countUp(app);
 
@@ -350,7 +374,7 @@
       bl.textContent = w.labels[1];
       front.classList.toggle("long", w.card.front.length > 22);
       back.classList.toggle("long", w.card.back.length > 22);
-      app.querySelector(".wotd-src").textContent = w.subject.name + " · " + w.topic.name;
+      app.querySelector(".wotd-src").textContent = w.src;
     }).catch(() => { /* keep the ¡Hola! card */ });
   }
 
@@ -392,9 +416,19 @@
           t.name, t.blurb,
           '<span data-meta="' + esc(t.id) + '"></span>')).join("") + "</ul>").join("");
 
+    // Direct links to this subject's Moodle course and school books (open in a new tab).
+    const links = (subject.links || []).length
+      ? '<h2 class="section-label">Links</h2><ul class="rows">' + subject.links.map((l) =>
+        '<li><a class="row" href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
+        '<span class="mode-ic">' + svg(l.kind === "buch" ? "book" : "course") + "</span>" +
+        '<span class="row-text"><span class="row-title">' + esc(l.name) + "</span>" +
+        (l.sub ? '<span class="row-sub">' + esc(l.sub) + "</span>" : "") + "</span>" +
+        '<span class="row-end">' + svg("external", "chev") + "</span></a></li>").join("") + "</ul>"
+      : "";
+
     render(topBar({ up: "#/", upLabel: "Übersicht", title: subject.name }) +
       '<main class="page"><h1 class="large-title">' + esc(subject.name) + "</h1>" +
-      (subject.blurb ? '<p class="lede">' + esc(subject.blurb) + "</p>" : "") +
+      (subject.blurb ? '<p class="lede">' + esc(subject.blurb) + "</p>" : "") + links +
       (topics.length
         ? list
         : notice("Hier gibt es noch keine Themen.", "Füge eines zur <code>topics</code>-Liste in <code>subjects/index.js</code> hinzu.")) +
@@ -762,6 +796,62 @@
         end: '<a class="bar-link" href="' + esc(topic.page) + '" target="_blank" rel="noopener">Vollbild ' + svg("external") + "</a>",
       }) +
       '<iframe class="frame" src="' + esc(topic.page) + '" title="' + esc(topic.name) + '"></iframe></div>', topic.name);
+  }
+
+  // Ideas box: the message is e-mailed through FormSubmit, so no server is needed.
+  // The first message ever sends an activation e-mail that has to be confirmed once.
+  function showIdeas() {
+    render(topBar({ up: "#/", upLabel: "Übersicht", title: "Ideen" }) +
+      '<main class="page"><h1 class="large-title">Ideen</h1>' +
+      '<p class="lede">Hier kannst du deine Vorschläge oder Sachen, die verändert werden sollen, hineinschreiben.</p>' +
+      '<form class="idea-form" novalidate>' +
+      '<label class="field"><span class="field-label">Deine Idee</span>' +
+      '<textarea name="idea" rows="6" placeholder="Zum Beispiel: Bitte auch Englisch-Vokabeln, oder: Im Quiz ist eine Antwort falsch …"></textarea></label>' +
+      '<label class="field"><span class="field-label">Dein Name <span class="opt">(freiwillig)</span></span>' +
+      '<input name="sender" type="text" autocomplete="name"></label>' +
+      '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<p class="idea-status" role="status"></p>' +
+      '<button type="submit" class="btn btn-primary">Absenden</button></form></main>', "Ideen");
+
+    const form = app.querySelector(".idea-form");
+    const status = form.querySelector(".idea-status");
+    const field = (n) => form.elements.namedItem(n);
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const idea = field("idea").value.trim();
+      if (field("_honey").value) return;
+      if (!idea) {
+        status.textContent = "Schreib zuerst deine Idee in das Feld.";
+        status.className = "idea-status bad";
+        field("idea").focus();
+        return;
+      }
+      const btn = form.querySelector("button");
+      btn.disabled = true;
+      btn.textContent = "Wird gesendet …";
+      status.textContent = "";
+      fetch("https://formsubmit.co/ajax/" + encodeURIComponent(window.IDEAS_MAIL || ""), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: "Neue Idee für 6a Lernübungen", _template: "table", _captcha: "false",
+          Name: field("sender").value.trim() || "(ohne Namen)", Idee: idea,
+        }),
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (String(d.success) !== "true") throw new Error(d.message || "not sent");
+          form.innerHTML = '<div class="notice"><strong>Danke!</strong>Deine Idee wurde verschickt.</div>' +
+            '<button type="button" class="btn btn-secondary" data-again>Noch eine Idee</button>';
+          form.querySelector("[data-again]").addEventListener("click", showIdeas);
+        })
+        .catch(() => {
+          btn.disabled = false;
+          btn.textContent = "Absenden";
+          status.textContent = "Das hat nicht geklappt. Prüfe deine Internetverbindung und versuch es nochmal.";
+          status.className = "idea-status bad";
+        });
+    });
   }
 
   function showNotFound(subject) {

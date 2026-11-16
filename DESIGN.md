@@ -104,8 +104,13 @@ Text stays at 16px or larger, and reading columns stay at or under 680px.
     once you've studied something)
   - **Fächer**, one row per subject with tile, description, progress bar and
     count
+  - **Ideen**, always the last row under Fächer: grey, dashed, with a plus
+    tile. It opens a form that e-mails the suggestion (formsubmit.co)
   - **Wort des Tages**, a sage card you can flip (the same word for everyone
-    that day)
+    that day). The words are funny, cheeky ones from `subjects/wort-des-tages.js`,
+    not from the vocabulary
+  - a **footer** with the owner's name and e-mail on the left and quicklink
+    pills (Moodle, digi4school, WebUntis, Schulwebsite, PerLe) on the right
 - **Top bar**: 52px tall and sticky, with a back button (chevron plus the
   parent's name). A small title fades in once you scroll. Study sessions show
   **Close (×)** instead.
@@ -155,6 +160,8 @@ no permissions and no payment. Progress is saved on the device.
 1. **Home: overview** (`#/`). See the start screen above. Tap a subject, or
    "Weiterlernen".
 2. **Subject: choose a part** (`#/spanisch`)
+   - **Links** at the top: the subject's Moodle course (this school year)
+     and its school book on digi4school, opening in a new tab.
    - Back to Home. Topics are listed under group headings ("Deine Trainer",
      "Vokabeln · Alegría 1"…), with word counts or best scores. Unit tiles
      show the unit number.

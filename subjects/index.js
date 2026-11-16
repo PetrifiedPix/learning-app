@@ -4,6 +4,9 @@
   Add a topic:   make its file, then add ONE line to that subject's "topics".
   Add a subject: copy the Spanish block below, paste it after it, and change it.
 
+  A subject can also have `links` (Moodle course, school book) shown on its page:
+    { kind: "kurs" | "buch", name, sub, url }
+
   A topic is either
     - a flashcard/quiz file:  file: "subjects/<subject>/<name>.js"  (see README.md)
     - a saved study page:     page: "subjects/<subject>/pages/<name>.html"
@@ -41,6 +44,10 @@ window.SUBJECTS = [
     short: "Ge",
     color: "#6F8FB3",
     blurb: "Die frühe Neuzeit: Stoff aus Zeitbilder 5/6",
+    links: [
+      { kind: "kurs", name: "Moodle-Kurs Geschichte 6A", sub: "eduvidual, SJ 26/27", url: "https://www.eduvidual.at/course/view.php?id=231646" },
+      { kind: "buch", name: "Zeitbilder 5/6", sub: "Schulbuch auf digi4school", url: "https://digi4school.at/ebook/25s0daf5rrpx" },
+    ],
     topics: [
       { id: "trainer", group: "Trainer", name: "Geschichte-Trainer", blurb: "Prüfungsfragen, Zuordnen, Zeitleiste und Lückentexte", page: "subjects/geschichte/pages/geschichte-trainer.html" },
 
@@ -60,6 +67,10 @@ window.SUBJECTS = [
     short: "La",
     color: "#5B9A9E",
     blurb: "Catull: carmina 3, 5, 8, 70 und 83",
+    links: [
+      { kind: "kurs", name: "Moodle-Kurs Latein 6ab", sub: "eduvidual, SJ 26/27", url: "https://www.eduvidual.at/course/view.php?id=227745" },
+      { kind: "buch", name: "Medias in res! L6 3–4", sub: "Schulbuch auf digi4school", url: "https://digi4school.at/" },
+    ],
     topics: [
       { id: "catull-trainer", group: "Trainer", name: "Catull-Trainer", blurb: "Text lesen, Textstellen übersetzen, Formen bestimmen", page: "subjects/latein/pages/catull-trainer.html" },
 
@@ -72,4 +83,17 @@ window.SUBJECTS = [
       { id: "catull-grundwissen", group: "Überblick", name: "Catull: Grundwissen", blurb: "Leben, Lesbia, Versmaße, Stilmittel", file: "subjects/latein/catull-grundwissen.js" },
     ],
   },
+];
+
+// The "Ideen" box on the start screen e-mails each suggestion to this address (via formsubmit.co).
+window.IDEAS_MAIL = "peteboyg@icloud.com";
+
+// Shown at the bottom of the start screen.
+window.SITE_OWNER = { name: "Peter Gökler", mail: "goekler.pet@gymschlierbach.at" };
+window.QUICKLINKS = [
+  { name: "Moodle", url: "https://www.eduvidual.at/my/courses.php" },
+  { name: "digi4school", url: "https://digi4school.at/" },
+  { name: "WebUntis", url: "https://gym-schlierbach.webuntis.com/WebUntis/#/basic/login" },
+  { name: "Schulwebsite", url: "https://www.gymschlierbach.eduhi.at/" },
+  { name: "PerLe", url: "https://www.gym-schlierbach.eduhi.at/PerLe/" },
 ];
