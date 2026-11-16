@@ -39,5 +39,6 @@ addTopic({
     ["1603", "Konversionseid in Graz", "Gegenreformation in Österreich"],
     ["1608 / 1609", "Gründung der Union / der Liga", "Dreißigjähriger Krieg"],
     ["1634", "Tod Wallensteins", "Dreißigjähriger Krieg"],
+    ["1588", "England besiegt die spanische Armada", "Gegenreformation"],
   ],
 });

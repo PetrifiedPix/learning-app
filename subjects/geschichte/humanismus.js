@@ -42,6 +42,16 @@ addTopic({
     ["„formell häretisch“", "So nannte die Kirche 1616 das heliozentrische Weltbild, weil es teilweise der Bibel widerspricht"],
     ["1616 als Wendepunkt", "Statt der Theologie setzen sich die beobachtenden (empirischen) Naturwissenschaften durch"],
     ["„Befreiung des Geistes für alle“?", "Nein: über 90 % konnten nicht lesen; es war eine Bewegung einer kleinen Elite, legte aber den Grundstein für den Wandel Europas"],
+    // Aus den BookWidgets „Der Buchdruck“ und „Leonardo da Vinci“
+    ["Johannes Gutenberg", "Erfand um 1450 den Buchdruck mit beweglichen Metalllettern"],
+    ["Bewegliche Lettern", "Einzelne Buchstaben aus Metall, die man immer wieder neu zu Seiten zusammensetzen konnte"],
+    ["Handgießinstrument", "Gutenbergs Gerät, um viele gleiche Metalllettern schnell zu gießen"],
+    ["Druckerpresse", "Gutenberg baute sie nach dem Vorbild der Weinpresse"],
+    ["Druckerfarbe", "Gutenberg entwickelte eine ölhaltige Farbe, die auf Metall hält"],
+    ["Setzer", "Stellte in der Druckerei die Lettern aus dem Setzkasten zu Zeilen und Seiten zusammen"],
+    ["Leonardos „Formel für Schönheit“", "Er vermaß ideale Körperproportionen ganz genau"],
+    ["Leonardos Erfindungen", "Seine Stärke: fremde Ideen weiterentwickeln und neu denken"],
+    ["Leonardo und der Krieg", "Wegen der ständigen Kriege in Italien waren seine Entwürfe für Kriegswaffen sehr gefragt"],
   ],
   questions: [
     { q: "Was bedeutet „Renaissance“?", options: ["Wiedergeburt der Antike", "Erneuerung der Kirche", "Entdeckung neuer Länder", "Wiederaufbau nach dem Krieg"], answer: "Wiedergeburt der Antike", explain: "Kunst und Kultur orientierten sich wieder an der griechisch-römischen Antike." },
@@ -68,5 +78,10 @@ addTopic({
     { q: "Warum lehnte die Kirche das heliozentrische Weltbild ab?", options: ["Es widerspricht teilweise der Bibel", "Kopernikus war Protestant", "Es war mathematisch falsch", "Der Kaiser verbot es"], answer: "Es widerspricht teilweise der Bibel", explain: "1616 nannte sie es „formell häretisch“ (ketzerisch)." },
     { q: "Brachten Humanismus und Renaissance eine Befreiung des Geistes für alle Menschen?", options: ["Nein, nur für eine kleine gebildete Elite", "Ja, alle lernten lesen", "Ja, aber nur in Deutschland", "Nein, sie verboten die Bildung"], answer: "Nein, nur für eine kleine gebildete Elite", explain: "Über 90 % konnten weiterhin nicht lesen und schreiben." },
     { q: "Was zeigt, dass das Individuum wichtig wurde?", options: ["Künstler signierten ihre Werke", "Alle trugen gleiche Kleidung", "Bücher erschienen ohne Autor", "Kirchen wurden kleiner"], answer: "Künstler signierten ihre Werke", explain: "Man schätzte Schaffenskraft und Originalität des Einzelnen." },
+    { q: "Wann erfand Gutenberg den Buchdruck?", options: ["um 1450", "um 1350", "um 1400", "um 1500"], answer: "um 1450", explain: "Mit beweglichen Metalllettern; die neuen Ideen verbreiteten sich nun schnell." },
+    { q: "Welche Erfindung gehört NICHT zu Gutenbergs Buchdruck?", options: ["Das Fernrohr", "Bewegliche Metalllettern", "Das Handgießinstrument", "Die Druckerpresse"], answer: "Das Fernrohr", explain: "Dazu kam noch eine ölhaltige Druckerfarbe." },
+    { q: "Wie suchte Leonardo nach der „Formel für Schönheit“?", options: ["Er vermaß ideale Körperproportionen genau", "Er kopierte antike Marmorstatuen", "Er schrieb Bücher über Ästhetik", "Er analysierte Landschaftsbilder"], answer: "Er vermaß ideale Körperproportionen genau", explain: "Bekannt ist sein Proportionsschema nach Vitruv." },
+    { q: "Worin lag Leonardos Genialität bei vielen Erfindungen vor allem?", options: ["Im Weiterentwickeln und Neudenken fremder Ideen", "Im völligen Neuerfinden ohne Vorbild", "Im Kopieren antiker Handschriften", "In der Massenproduktion seiner Maschinen"], answer: "Im Weiterentwickeln und Neudenken fremder Ideen", explain: "Viele Ideen gab es schon; er dachte sie weiter." },
+    { q: "Warum waren Leonardos Waffenentwürfe so gefragt?", options: ["Wegen der ständigen Kriege in Italien", "Weil der Papst Krieg verbot", "Weil er sie billig verkaufte", "Weil die Osmanen sie kauften"], answer: "Wegen der ständigen Kriege in Italien", explain: "Er sezierte auch selbst Leichen, um die Anatomie genau zu verstehen." },
   ],
 });

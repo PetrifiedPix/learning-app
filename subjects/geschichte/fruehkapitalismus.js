@@ -43,6 +43,10 @@ addTopic({
     ["Zunft: Arbeit", "Unabhängige Zunftmeister in der eigenen Werkstatt"],
     ["Frühkapitalismus: Arbeit", "Lohnarbeit, Verlagssystem und Großbetriebe"],
     ["Jakob Fugger „der Reiche“", "Finanzierte 1519 die Kaiserwahl Karls V. und machte Geschäfte mit dem Papst"],
+    // Aus dem BookWidget „Der Frühkapitalismus“
+    ["Geldwechsler (Aufgabe)", "Prüften Feingehalt und Gewicht der Münzen und tauschten sie um"],
+    ["Kredite", "Bankiers liehen Kaufleuten, Fürsten und Königen Geld, gegen Pfand oder verdeckte Aufschläge"],
+    ["Fürsten, Kaiser und Großkonzerne", "Sie nahmen dort Kredite für Kriege auf und schützten die Konzerne dafür vor Beschränkungen"],
   ],
   questions: [
     { q: "Woher kommt das Wort „Bank“?", options: ["Vom Tisch (ital. banca) der Geldwechsler", "Von einer Sitzbank in der Kirche", "Vom Namen einer Kaufmannsfamilie", "Vom lateinischen Wort für Gold"], answer: "Vom Tisch (ital. banca) der Geldwechsler", explain: "Geldwechsler prüften und tauschten auf ihrem Tisch die Münzen." },
@@ -64,5 +68,9 @@ addTopic({
     { q: "Wessen Kaiserwahl 1519 finanzierten die Fugger?", options: ["Karl V.", "Ferdinand II.", "Maximilian II.", "Joseph II."], answer: "Karl V.", explain: "Dazu machten sie Ablass- und Kreditgeschäfte mit dem Papst." },
     { q: "Was zählt NICHT zu den Neuerungen aus Italien?", options: ["Der Ablasshandel", "Wechselbriefe", "Arabische Ziffern", "Doppelte Buchführung"], answer: "Der Ablasshandel", explain: "Italien gilt als Wiege des modernen Geld- und Kreditwesens." },
     { q: "Was löste die „Silberschwemme“ Mitte des 16. Jh. aus?", options: ["Starke Inflation", "Sinkende Preise", "Das Ende des Handels", "Höhere Löhne"], answer: "Starke Inflation", explain: "Dazu stieg zur gleichen Zeit die Bevölkerung; Verlierer war die städtische Unterschicht, Gewinner die Händler." },
+    { q: "Wo entstand ab dem 13. und 14. Jh. das moderne Geld- und Kreditwesen?", options: ["In Florenz, Genua und Venedig", "In Augsburg und Nürnberg", "Am kaiserlichen Hof", "In den Silberbergbauregionen"], answer: "In Florenz, Genua und Venedig", explain: "In den italienischen Handelsstädten." },
+    { q: "Richtig oder falsch: Die Löhne der Unterschichten stiegen so stark wie die Brotpreise.", options: ["Falsch", "Richtig"], answer: "Falsch", explain: "Brot kostete um 1600 viermal so viel, die Löhne stiegen kaum." },
+    { q: "Richtig oder falsch: Im Verlagssystem blieben die Handwerksmeister völlig selbstständig.", options: ["Falsch", "Richtig"], answer: "Falsch", explain: "Sie wurden vom Verleger abhängig und arbeiteten im Stücklohn." },
+    { q: "Was ist eine Monopolstellung?", options: ["Ein Anbieter beherrscht den Markt und diktiert die Preise", "Ein Bündnis von Handwerkern", "Ein kirchliches Zinsverbot", "Eine Steuer des Kaisers"], answer: "Ein Anbieter beherrscht den Markt und diktiert die Preise", explain: "Beispiel: das Kupfermonopol der Fugger." },
   ],
 });
