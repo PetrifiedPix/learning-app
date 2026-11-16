@@ -54,4 +54,22 @@ window.SUBJECTS = [
       { id: "jahreszahlen", group: "Überblick", name: "Jahreszahlen", blurb: "Alle wichtigen Daten von 1309 bis 1781", file: "subjects/geschichte/jahreszahlen.js" },
     ],
   },
+  {
+    id: "latein",
+    name: "Latein",
+    short: "La",
+    color: "#5B9A9E",
+    blurb: "Catull: carmina 3, 5, 8, 70 und 83",
+    topics: [
+      { id: "catull-trainer", group: "Trainer", name: "Catull-Trainer", blurb: "Text lesen, Textstellen übersetzen, Formen bestimmen", page: "subjects/latein/pages/catull-trainer.html" },
+
+      { id: "c3", short: "3", group: "Catull · carmina", name: "Carmen 3", blurb: "Lugete, o Veneres (der tote Spatz)", file: "subjects/latein/catull-3.js" },
+      { id: "c5", short: "5", group: "Catull · carmina", name: "Carmen 5", blurb: "Vivamus, mea Lesbia (tausend Küsse)", file: "subjects/latein/catull-5.js" },
+      { id: "c8", short: "8", group: "Catull · carmina", name: "Carmen 8", blurb: "Miser Catulle (obdura!)", file: "subjects/latein/catull-8.js" },
+      { id: "c70", short: "70", group: "Catull · carmina", name: "Carmen 70", blurb: "Nulli se dicit (in Wind und Wasser)", file: "subjects/latein/catull-70.js" },
+      { id: "c83", short: "83", group: "Catull · carmina", name: "Carmen 83", blurb: "Lesbia mi praesente viro", file: "subjects/latein/catull-83.js" },
+
+      { id: "catull-grundwissen", group: "Überblick", name: "Catull: Grundwissen", blurb: "Leben, Lesbia, Versmaße, Stilmittel", file: "subjects/latein/catull-grundwissen.js" },
+    ],
+  },
 ];

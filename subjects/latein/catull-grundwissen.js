@@ -1,0 +1,38 @@
+// Catull: Grundwissen (Leben, Versmaße) und Stilmittel in carmina 3, 5, 8, 70, 83
+// cards: ["Begriff", "Erklärung", "optional note"]
+addTopic({
+  labels: ["Begriff", "Erklärung"],
+  unit: ["Begriff", "Begriffe", "Begriffen"],
+  cards: [
+    ["Gaius Valerius Catullus", "Römischer Dichter, ca. 84–54 v. Chr., aus Verona"],
+    ["Neoteriker (poetae novi)", "Gruppe junger Dichter um Catull: kurze, kunstvolle, persönliche Gedichte statt großer Epen"],
+    ["carmina", "Catulls Gedichtsammlung, 116 Gedichte"],
+    ["Lesbia", "Deckname von Catulls Geliebter, vermutlich Clodia, eine verheiratete Frau aus vornehmer Familie"],
+    ["Hendekasyllabus", "Elfsilbler; Versmaß von carmen 3 und 5"],
+    ["Hinkjambus (Choliambus)", "Jambischer Vers, der am Ende „hinkt“; Versmaß von carmen 8"],
+    ["Elegisches Distichon", "Hexameter + Pentameter; Versmaß von carmen 70 und 83 (und 85)"],
+    ["carmen 3", "Trauer um den toten Spatz (passer) des Mädchens"],
+    ["carmen 5", "Lass uns leben und lieben, Tausende Küsse"],
+    ["carmen 8", "Selbstgespräch nach der Trennung: obdura!"],
+    ["carmen 70", "Was eine Frau dem Liebhaber schwört, schreibt man in Wind und Wasser"],
+    ["carmen 83", "Lesbia schimpft vor ihrem Mann über Catull, also liebt sie ihn noch"],
+    ["carmen 85", "Odi et amo: Ich hasse und liebe"],
+    ["Diminutiv", "Verkleinerungsform, z. B. ocelli, misellus, turgiduli (c. 3), labella (c. 8)"],
+    ["Anapher", "Wiederholung am Satzanfang, z. B. quis … quem … quem (c. 8), deinde … dein (c. 5)"],
+    ["Rhetorische Frage", "Frage ohne erwartete Antwort, z. B. quae tibi manet vita? (c. 8)"],
+    ["Selbstanrede", "Der Dichter spricht sich selbst an: Miser Catulle (c. 8)"],
+    ["Antithese", "Gegensatz, z. B. soles … redire possunt – nox perpetua (c. 5)"],
+    ["Hyperbaton", "Sperrung zusammengehöriger Wörter, z. B. rapida … aqua (c. 70)"],
+    ["Metapher", "Bildlicher Ausdruck, z. B. lux und nox für Leben und Tod (c. 5), uritur für Liebe (c. 83)"],
+    ["Hyperbel", "Übertreibung, z. B. die Tausenden Küsse (c. 5)"],
+  ],
+  questions: [
+    { q: "Aus welcher Stadt stammte Catull?", options: ["Verona", "Rom", "Neapel", "Athen"], answer: "Verona", explain: "Er lebte ca. 84–54 v. Chr. und verbrachte viel Zeit in Rom." },
+    { q: "Wer verbirgt sich vermutlich hinter dem Namen Lesbia?", options: ["Clodia, eine verheiratete Römerin", "Catulls Schwester", "Eine griechische Göttin", "Ciceros Tochter"], answer: "Clodia, eine verheiratete Römerin", explain: "Der Name erinnert an die Dichterin Sappho von der Insel Lesbos." },
+    { q: "In welchem Versmaß sind carmen 70 und 83 geschrieben?", options: ["Elegisches Distichon", "Hendekasyllabus", "Hinkjambus", "Hexameter allein"], answer: "Elegisches Distichon", explain: "Abwechselnd Hexameter und Pentameter." },
+    { q: "In welchem Versmaß sind carmen 3 und 5 geschrieben?", options: ["Hendekasyllabus", "Elegisches Distichon", "Hinkjambus", "Sapphische Strophe"], answer: "Hendekasyllabus", explain: "Der Elfsilbler, Catulls Lieblingsvers für leichte Gedichte." },
+    { q: "Was ist ein Diminutiv?", options: ["Eine Verkleinerungsform wie ocellus", "Eine Steigerungsform", "Eine Frageform", "Ein Befehl"], answer: "Eine Verkleinerungsform wie ocellus", explain: "ocellus = Äuglein (von oculus)." },
+    { q: "Welches Stilmittel ist „Miser Catulle“?", options: ["Selbstanrede", "Hyperbaton", "Antithese", "Diminutiv"], answer: "Selbstanrede", explain: "Catull spricht sich selbst im Vokativ an." },
+    { q: "Was waren die Neoteriker?", options: ["Junge Dichter, die kurze, persönliche Gedichte schrieben", "Römische Senatoren", "Gegner Catulls", "Griechische Philosophen"], answer: "Junge Dichter, die kurze, persönliche Gedichte schrieben", explain: "Lateinisch poetae novi, die „neuen Dichter“." },
+  ],
+});
