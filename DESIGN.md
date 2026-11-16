@@ -96,8 +96,8 @@ Text stays at 16px or larger, and reading columns stay at or under 680px.
 - **Start screen** (`#/`):
   - top row with a small "6a" brand mark and "Lernübungen" on the left, today's
     date on the right
-  - large "Heute" with the line "Vokabeln und Grammatik für die nächste
-    Schularbeit."
+  - large "Heute" with the line "Vokabeln, Grammatik und Geschichte für die nächste
+    Prüfung."
   - a **stats strip** with three real numbers from this device: Themen geübt,
     Offene Fehler, Bestes Quiz
   - **Weiterlernen**, a card for the last topic with an "Öffnen" button (only

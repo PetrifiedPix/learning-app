@@ -35,4 +35,21 @@ window.SUBJECTS = [
       { id: "a2-u2", short: "2", group: "Vokabeln · Alegría 2", name: "Unidad 2", blurb: "De viaje", file: "subjects/spanish/vokabeln/a2-u2.js" },
     ],
   },
+  {
+    id: "geschichte",
+    name: "Geschichte",
+    short: "Ge",
+    color: "#6F8FB3",
+    blurb: "Die frühe Neuzeit: Stoff aus Zeitbilder 5/6",
+    topics: [
+      { id: "humanismus", short: "1", group: "Stoffgebiete · Frühe Neuzeit", name: "Humanismus und Renaissance", blurb: "ZB S. 112–115", file: "subjects/geschichte/humanismus.js" },
+      { id: "fruehkapitalismus", short: "2", group: "Stoffgebiete · Frühe Neuzeit", name: "Frühkapitalismus", blurb: "ZB S. 118–119", file: "subjects/geschichte/fruehkapitalismus.js" },
+      { id: "reformation", short: "3", group: "Stoffgebiete · Frühe Neuzeit", name: "Reformation und Gegenreformation", blurb: "ZB S. 122–123 und 128–131", file: "subjects/geschichte/reformation.js" },
+      { id: "entdeckungen", short: "4", group: "Stoffgebiete · Frühe Neuzeit", name: "Zeitalter der Entdeckungen", blurb: "ZB S. 164–166", file: "subjects/geschichte/entdeckungen.js" },
+      { id: "bauernkriege", short: "5", group: "Stoffgebiete · Frühe Neuzeit", name: "Die Bauernkriege", blurb: "ZB S. 124–125", file: "subjects/geschichte/bauernkriege.js" },
+      { id: "dreissigjaehriger-krieg", short: "6", group: "Stoffgebiete · Frühe Neuzeit", name: "Der Dreißigjährige Krieg", blurb: "ZB S. 132–133", file: "subjects/geschichte/dreissigjaehriger-krieg.js" },
+
+      { id: "jahreszahlen", group: "Überblick", name: "Jahreszahlen", blurb: "Alle wichtigen Daten von 1450 bis 1648", file: "subjects/geschichte/jahreszahlen.js" },
+    ],
+  },
 ];

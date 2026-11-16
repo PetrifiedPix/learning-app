@@ -73,6 +73,9 @@
 
   function count(n, one, many) { return n + " " + (n === 1 ? one : many); }
 
+  // What a topic's cards are called; a topic file can set unit: [one, many, dative plural].
+  function unit(data) { return (data && data.unit) || ["Wort", "Wörter", "Wörtern"]; }
+
   const ICONS = {
     back: '<path d="M15 5l-7 7 7 7"/>',
     chev: '<path d="M9 5l7 7-7 7"/>',
@@ -284,7 +287,7 @@
     const stats =
       '<dl class="stats reveal" style="--i:2">' +
       '<div><dt>Themen geübt</dt><dd><span data-count="' + studied + '">0</span><small> / ' + total + "</small></dd></div>" +
-      '<div><dt>Offene Fehler</dt><dd><span data-count="' + open + '">0</span><small> ' + (open === 1 ? "Wort" : "Wörter") + "</small></dd></div>" +
+      '<div><dt>Offene Fehler</dt><dd><span data-count="' + open + '">0</span><small> ' + (open === 1 ? "Karte" : "Karten") + "</small></dd></div>" +
       "<div><dt>Bestes Quiz</dt><dd>" + (best ? best.score + "<small> / " + best.total + "</small>" : "–") + "</dd></div></dl>";
 
     const cont = last.href
@@ -310,7 +313,7 @@
       '<header class="home-top reveal" style="--i:0"><span class="brand"><span class="brand-mark" aria-hidden="true">6a</span>Lernübungen</span>' +
       '<span class="home-date">' + esc(date) + "</span></header>" +
       '<h1 class="home-title reveal" style="--i:1">Heute</h1>' +
-      '<p class="lede reveal" style="--i:1">Vokabeln und Grammatik für die nächste Schularbeit.</p>' +
+      '<p class="lede reveal" style="--i:1">Vokabeln, Grammatik und Geschichte für die nächste Prüfung.</p>' +
       stats +
       '<div class="home-grid"><section class="home-col">' + cont +
       '<h2 class="section-label reveal" style="--i:4">Fächer</h2>' +
@@ -366,7 +369,7 @@
     if (st.quizBest) return '<span class="chip">' + st.quizBest.score + "/" + st.quizBest.total + "</span>";
     const n = normCards(data.cards).length;
     const q = (data.questions || []).length;
-    return n ? count(n, "Wort", "Wörter") : count(q, "Frage", "Fragen");
+    return n ? count(n, unit(data)[0], unit(data)[1]) : count(q, "Frage", "Fragen");
   }
 
   function showSubject(subject) {
@@ -426,7 +429,7 @@
     if (cards.length) {
       const round = cards.length > ROUND + 5 ? ROUND : cards.length;
       modes += row(base + "/karten", '<span class="mode-ic">' + svg("cards") + "</span>", "Karteikarten",
-        (round < cards.length ? round + " zufällige von " + cards.length + " Wörtern" : count(cards.length, "Karte", "Karten")) +
+        (round < cards.length ? round + " zufällige von " + cards.length + " " + unit(data)[2] : count(cards.length, "Karte", "Karten")) +
         ". Umdrehen und sagen, ob du es wusstest.",
         st.cardsBest ? '<span class="chip">' + st.cardsBest.known + "/" + st.cardsBest.total + "</span>" : "");
     }
@@ -439,7 +442,7 @@
     }
     if (missed.length) {
       modes += row(base + "/fehler", '<span class="mode-ic">' + svg("redo") + "</span>", "Fehler üben",
-        count(missed.length, "Wort", "Wörter") + ", die du noch nicht wusstest.", "");
+        count(missed.length, unit(data)[0], unit(data)[1]) + ", die du noch nicht wusstest.", "");
     }
 
     const reverse = !!st.reverse;

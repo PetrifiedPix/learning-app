@@ -1,0 +1,33 @@
+// Geschichte 6a: wichtige Jahreszahlen aus allen sechs Stoffgebieten (Zeitbilder 5/6)
+// Each card: ["Jahr", "Ereignis", "optional note"]
+addTopic({
+  labels: ["Jahr", "Ereignis"],
+  unit: ["Jahreszahl", "Jahreszahlen", "Jahreszahlen"],
+  cards: [
+    ["um 1450", "Erfindung des „modernen“ Buchdrucks", "Humanismus und Renaissance"],
+    ["1453", "Die Osmanen erobern Konstantinopel", "Entdeckungen, Humanismus"],
+    ["1492", "Kolumbus erreicht Amerika (Guanahani)", "Entdeckungen"],
+    ["1494", "Vertrag von Tordesillas: Spanien und Portugal teilen die Welt", "Entdeckungen"],
+    ["1498", "Vasco da Gama erreicht Indien auf dem Seeweg", "Entdeckungen"],
+    ["1517", "Luther veröffentlicht seine 95 Thesen", "Reformation"],
+    ["1519–1522", "Erste Weltumseglung (Magellan)", "Entdeckungen"],
+    ["1519", "Cortés beginnt die Eroberung des Aztekenreichs", "Entdeckungen"],
+    ["1519–1556", "Karl V. regiert ein Weltreich", "Reformation"],
+    ["1520", "Luther verbrennt die Bannbulle des Papstes", "Reformation"],
+    ["1521", "Reichstag zu Worms: Luther widerruft nicht, Reichsacht", "Reformation"],
+    ["1522", "Aufstand der Reichsritter", "Bauernkriege"],
+    ["1525", "Großer Bauernkrieg", "Bauernkriege"],
+    ["1530", "Augsburger Bekenntnis", "Reformation"],
+    ["1532", "Pizarro erobert das Inkareich", "Entdeckungen"],
+    ["1534", "Heinrich VIII. wird Oberhaupt der englischen Kirche", "Reformation"],
+    ["1545–1563", "Konzil von Trient", "Gegenreformation"],
+    ["1555", "Augsburger Religionsfrieden", "Reformation"],
+    ["1598", "Edikt von Nantes: Glaubensfreiheit für die Hugenotten", "Gegenreformation"],
+    ["1616", "Die Kirche erklärt das heliozentrische Weltbild für ketzerisch", "Humanismus und Renaissance"],
+    ["1618", "Prager Fenstersturz, Beginn des Dreißigjährigen Krieges", "Dreißigjähriger Krieg"],
+    ["1620", "Schlacht am Weißen Berg", "Dreißigjähriger Krieg"],
+    ["1630", "Schweden (Gustav Adolf) greifen in den Krieg ein", "Dreißigjähriger Krieg"],
+    ["1648", "Westfälischer Friede", "Dreißigjähriger Krieg"],
+    ["1781", "Toleranzpatent Josephs II.", "Gegenreformation in Österreich"],
+  ],
+});
