@@ -69,7 +69,7 @@ window.SUBJECTS = [
     blurb: "Catull: carmina 3, 5, 8, 70 und 83",
     links: [
       { kind: "kurs", name: "Moodle-Kurs Latein 6ab", sub: "eduvidual, SJ 26/27", url: "https://www.eduvidual.at/course/view.php?id=227745" },
-      { kind: "buch", name: "Medias in res! L6 3–4", sub: "Schulbuch auf digi4school", url: "https://digi4school.at/" },
+      { kind: "buch", name: "Medias in res! L6 3–4", sub: "E-Book auf scook (Veritas)", url: "https://www.scook.at/produkt/7ea4154a-6214-4e26-9b2b-0c818b21641f" },
     ],
     topics: [
       { id: "catull-trainer", group: "Trainer", name: "Catull-Trainer", blurb: "Text lesen, Textstellen übersetzen, Formen bestimmen", page: "subjects/latein/pages/catull-trainer.html" },
