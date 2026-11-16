@@ -32,6 +32,16 @@ addTopic({
     ["Galileo Galilei", "Gelehrter (1564–1642); musste vor dem Inquisitionsgericht die Lehre des Kopernikus widerrufen"],
     ["1616", "Die Kirche erklärt das heliozentrische Weltbild für „formell ketzerisch“"],
     ["Theologie", "Galt bis zur Zeitenwende als „Königin der Wissenschaft“"],
+    // Aus dem Unterricht (eduvidual: Erwartungshorizont, PPT, Zusammenfassung)
+    ["„ad fontes“", "„Zurück zu den Quellen“: Rückbesinnung auf die antiken Originaltexte"],
+    ["Menschenbild der Renaissance", "Der Mensch ist nicht mehr nur sterbliche Hülle, sondern Ebenbild Gottes; Sinnlichkeit und Lebenslust werden bejaht"],
+    ["Mittelalter: Bildung", "Fast nur in Kloster- und Domschulen"],
+    ["Frühe Neuzeit: Bildung", "Private Schulen, Buchdruck als Massenmedium, Mensch und Natur im Mittelpunkt"],
+    ["Frühe Neuzeit: Wirtschaft", "Aufschwung der Städte, neuer Unternehmertyp, Geburtsstunde des Bankwesens, technische Erfindungen"],
+    ["Frühe Neuzeit: Politik", "Kaiser und Papst verlieren Macht, die Landesfürsten werden stärker, Kampf gegen Missstände in der Kirche"],
+    ["„formell häretisch“", "So nannte die Kirche 1616 das heliozentrische Weltbild, weil es teilweise der Bibel widerspricht"],
+    ["1616 als Wendepunkt", "Statt der Theologie setzen sich die beobachtenden (empirischen) Naturwissenschaften durch"],
+    ["„Befreiung des Geistes für alle“?", "Nein: über 90 % konnten nicht lesen; es war eine Bewegung einer kleinen Elite, legte aber den Grundstein für den Wandel Europas"],
   ],
   questions: [
     { q: "Was bedeutet „Renaissance“?", options: ["Wiedergeburt der Antike", "Erneuerung der Kirche", "Entdeckung neuer Länder", "Wiederaufbau nach dem Krieg"], answer: "Wiedergeburt der Antike", explain: "Kunst und Kultur orientierten sich wieder an der griechisch-römischen Antike." },
@@ -52,5 +62,11 @@ addTopic({
     { q: "Wer stellte die Sonne in den Mittelpunkt der Welt?", options: ["Nikolaus Kopernikus", "Ptolemäus", "Leonardo da Vinci", "Petrarca"], answer: "Nikolaus Kopernikus", explain: "Er übernahm diese Idee vom antiken Astronomen Aristarch." },
     { q: "Was erkannte Johannes Kepler?", options: ["Die Planeten bewegen sich in Ellipsen", "Die Erde ist der Mittelpunkt", "Die Erde ist eine Scheibe", "Der Mond ist ein Planet"], answer: "Die Planeten bewegen sich in Ellipsen", explain: "Nicht in Kreisen, wie Kopernikus gedacht hatte." },
     { q: "Was geschah mit Galileo Galilei?", options: ["Er musste vor dem Inquisitionsgericht widerrufen", "Er wurde Papst", "Er wurde verbrannt", "Er wurde zum Ritter geschlagen"], answer: "Er musste vor dem Inquisitionsgericht widerrufen", explain: "Er musste unterschreiben, die Lehre des Kopernikus nie für wahr gehalten zu haben." },
+    { q: "Was bedeutet „ad fontes“?", options: ["Zurück zu den Quellen", "Hin zu Gott", "Vorwärts in die Zukunft", "Zurück ins Kloster"], answer: "Zurück zu den Quellen", explain: "Die Humanisten wollten die antiken Texte im Original lesen." },
+    { q: "Warum gilt 1453 als Wendepunkt?", options: ["Geflüchtete Lehrer brachten Altgriechisch in den Westen", "Kolumbus erreichte Amerika", "Luther veröffentlichte seine Thesen", "Der Buchdruck wurde verboten"], answer: "Geflüchtete Lehrer brachten Altgriechisch in den Westen", explain: "Nach der Eroberung Konstantinopels durch die Osmanen." },
+    { q: "Wo fand Bildung im Mittelalter vor allem statt?", options: ["In Kloster- und Domschulen", "In privaten Schulen", "An Universitäten in Amerika", "Zu Hause mit gedruckten Büchern"], answer: "In Kloster- und Domschulen", explain: "In der Frühen Neuzeit kamen private Schulen und der Buchdruck dazu." },
+    { q: "Warum lehnte die Kirche das heliozentrische Weltbild ab?", options: ["Es widerspricht teilweise der Bibel", "Kopernikus war Protestant", "Es war mathematisch falsch", "Der Kaiser verbot es"], answer: "Es widerspricht teilweise der Bibel", explain: "1616 nannte sie es „formell häretisch“ (ketzerisch)." },
+    { q: "Brachten Humanismus und Renaissance eine Befreiung des Geistes für alle Menschen?", options: ["Nein, nur für eine kleine gebildete Elite", "Ja, alle lernten lesen", "Ja, aber nur in Deutschland", "Nein, sie verboten die Bildung"], answer: "Nein, nur für eine kleine gebildete Elite", explain: "Über 90 % konnten weiterhin nicht lesen und schreiben." },
+    { q: "Was zeigt, dass das Individuum wichtig wurde?", options: ["Künstler signierten ihre Werke", "Alle trugen gleiche Kleidung", "Bücher erschienen ohne Autor", "Kirchen wurden kleiner"], answer: "Künstler signierten ihre Werke", explain: "Man schätzte Schaffenskraft und Originalität des Einzelnen." },
   ],
 });

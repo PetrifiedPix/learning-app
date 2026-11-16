@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Geschichte-Trainer</title>
+<style>
+:root {
+  --bg: #F7F8FA; --surface: #FFFFFF; --surface-2: #F0F2F5;
+  --border: #E4E7EC; --border-strong: #D0D5DD;
+  --text: #1D2330; --text-2: #667085;
+  --primary: #2E3646; --on-primary: #FFFFFF;
+  --accent: #7BA696; --accent-soft: #EAF2EE; --on-accent-soft: #2F5446;
+  --tint: #6F8FB3; --tint-soft: #E9EFF6;
+  --success: #3E8E66; --error: #C8564B;
+  --success-bg: rgba(62,142,102,.10); --error-bg: rgba(200,86,75,.08);
+  --shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.06);
+  --ease: cubic-bezier(.2,.7,.2,1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111317; --surface: #181B21; --surface-2: #20242B;
+    --border: #2A2F37; --border-strong: #3A404A;
+    --text: #ECEEF2; --text-2: #9AA1AD;
+    --primary: #A9CDBD; --on-primary: #12201A;
+    --accent: #8DB8A6; --accent-soft: #1C2A25; --on-accent-soft: #CFE5DA;
+    --tint: #8FA9C8; --tint-soft: #1E2733;
+    --success: #6CC497; --error: #E8877D;
+    --success-bg: rgba(108,196,151,.14); --error-bg: rgba(232,135,125,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111317; --surface: #181B21; --surface-2: #20242B;
+  --border: #2A2F37; --border-strong: #3A404A;
+  --text: #ECEEF2; --text-2: #9AA1AD;
+  --primary: #A9CDBD; --on-primary: #12201A;
+  --accent: #8DB8A6; --accent-soft: #1C2A25; --on-accent-soft: #CFE5DA;
+  --tint: #8FA9C8; --tint-soft: #1E2733;
+  --success: #6CC497; --error: #E8877D;
+  --success-bg: rgba(108,196,151,.14); --error-bg: rgba(232,135,125,.14);
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 17px/26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+main {
+  max-width: 680px; margin: 0 auto;
+  padding: 16px 16px calc(32px + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 640px) { main { padding-left: 24px; padding-right: 24px; } }
+h1, h2 { letter-spacing: -0.02em; margin: 0; }
+h1 { font-size: 26px; line-height: 32px; }
+h2 { font-size: 20px; line-height: 28px; }
+p { margin: 0; }
+.muted { color: var(--text-2); }
+.small { font-size: 15px; line-height: 22px; }
+.xs { font-size: 13px; line-height: 18px; }
+.label { font-size: 13px; line-height: 18px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+button { font: inherit; color: inherit; }
+.stack > * + * { margin-top: 16px; }
+.rise { animation: rise 320ms var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes pop { 50% { transform: scale(1.03); } }
+@keyframes shake { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+
+/* Home */
+.intro { margin: 8px 0 24px; }
+.intro p { margin-top: 6px; }
+.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.row {
+  width: 100%; min-height: 76px; display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; text-align: left; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), border-color 160ms;
+}
+.row:hover { border-color: var(--border-strong); box-shadow: var(--shadow); transform: translateY(-1px); }
+.row:active { transform: scale(.99); }
+.tile {
+  flex: none; width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center; background: var(--tint-soft); color: var(--tint);
+}
+.tile svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.row-text { flex: 1; min-width: 0; }
+.row-text strong { display: block; font-weight: 600; }
+.row-text span { display: block; color: var(--text-2); font-size: 15px; line-height: 22px; }
+.chip {
+  flex: none; font-size: 13px; line-height: 18px; padding: 3px 10px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--on-accent-soft); font-weight: 600;
+}
+.chev { flex: none; width: 18px; height: 18px; color: var(--text-2); fill: none; stroke: currentColor; stroke-width: 1.75; }
+
+/* Session chrome */
+.top { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.back {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 12px 0 6px;
+  border: 0; background: none; color: var(--text-2); cursor: pointer; border-radius: 999px;
+}
+.back:hover { background: var(--surface-2); color: var(--text); }
+.back svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; }
+.top .count { margin-left: auto; color: var(--text-2); font-size: 15px; }
+.bar { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+.bar i { display: block; height: 100%; background: var(--tint); border-radius: 999px; transition: width 300ms var(--ease); }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
+  padding: 24px 20px; box-shadow: var(--shadow);
+}
+.card h2 { margin-top: 6px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 52px; padding: 0 24px; border-radius: 999px; cursor: pointer;
+  border: 1px solid transparent; font-weight: 600;
+  transition: transform 120ms var(--ease), background 160ms, border-color 160ms;
+}
+.btn:active { transform: scale(.98); }
+.btn-primary { background: var(--primary); color: var(--on-primary); }
+.btn-secondary { background: var(--surface); border-color: var(--border); }
+.btn-secondary:hover { border-color: var(--border-strong); }
+.btn:disabled { opacity: .45; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.actions .btn { flex: 1 1 160px; }
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+/* Filter chips */
+.filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin: 0 -16px 20px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; }
+.filters::-webkit-scrollbar { display: none; }
+.filter {
+  flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); font-size: 15px;
+}
+.filter[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+
+/* Exam questions */
+textarea {
+  width: 100%; min-height: 120px; margin-top: 16px; padding: 12px 14px; resize: vertical;
+  font: inherit; color: var(--text); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 12px;
+}
+textarea:focus { outline: none; border-color: var(--primary); }
+.points { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.point {
+  display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--bg);
+  animation: rise 280ms var(--ease) both; animation-delay: calc(var(--i, 0) * 50ms);
+}
+.point input { flex: none; width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--success); }
+.point:has(input:checked) { border-color: var(--success); background: var(--success-bg); }
+.hint { margin-top: 12px; }
+
+/* Sorting */
+.item {
+  min-height: 140px; display: grid; place-items: center; text-align: center;
+  font-size: 22px; line-height: 30px; font-weight: 700; letter-spacing: -0.01em;
+  animation: rise 300ms var(--ease) both;
+}
+.item.ok { border-color: var(--success); background: var(--success-bg); animation: pop 300ms var(--ease); }
+.item.bad { border-color: var(--error); background: var(--error-bg); animation: shake 320ms var(--ease); }
+.cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.cat {
+  min-height: 64px; padding: 10px 12px; border-radius: 16px; cursor: pointer; font-weight: 600;
+  border: 1px solid var(--border-strong); background: var(--surface); line-height: 22px;
+  transition: transform 120ms var(--ease), border-color 160ms;
+}
+.cat:hover { border-color: var(--primary); }
+.cat:active { transform: scale(.98); }
+.cat.right { border-color: var(--success); background: var(--success-bg); }
+.cat.wrong { border-color: var(--error); background: var(--error-bg); }
+.feedback { margin-top: 16px; padding: 12px 14px; border-radius: 12px; font-size: 15px; line-height: 22px; animation: rise 240ms var(--ease) both; }
+.feedback.ok { background: var(--success-bg); color: var(--text); }
+.feedback.bad { background: var(--error-bg); color: var(--text); }
+.feedback strong { color: var(--success); }
+.feedback.bad strong { color: var(--error); }
+
+/* Timeline */
+.pool, .order { display: grid; gap: 8px; }
+.ev {
+  width: 100%; min-height: 56px; padding: 10px 14px; text-align: left; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+  display: flex; gap: 12px; align-items: center; line-height: 22px;
+  animation: rise 260ms var(--ease) both; animation-delay: calc(var(--i, 0) * 40ms);
+}
+.ev:hover { border-color: var(--border-strong); }
+.ev .n {
+  flex: none; width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center;
+  background: var(--surface-2); color: var(--text-2); font-size: 13px; font-weight: 700;
+}
+.order .ev .n { background: var(--tint-soft); color: var(--tint); }
+.ev .yr { margin-left: auto; font-weight: 700; color: var(--text-2); font-size: 15px; white-space: nowrap; }
+.ev.ok { border-color: var(--success); background: var(--success-bg); }
+.ev.bad { border-color: var(--error); background: var(--error-bg); }
+.empty { padding: 14px; border: 1px dashed var(--border-strong); border-radius: 12px; color: var(--text-2); font-size: 15px; text-align: center; }
+
+/* Gap text */
+.gaptext { font-size: 18px; line-height: 36px; }
+.gap {
+  display: inline-block; min-width: 92px; min-height: 32px; margin: 0 2px; padding: 0 10px;
+  border: 0; border-bottom: 2px solid var(--border-strong); border-radius: 6px 6px 0 0;
+  background: var(--surface-2); cursor: pointer; line-height: 32px; vertical-align: baseline;
+  font-weight: 600;
+}
+.gap.sel { border-bottom-color: var(--primary); background: var(--tint-soft); }
+.gap.ok { border-bottom-color: var(--success); background: var(--success-bg); }
+.gap.bad { border-bottom-color: var(--error); background: var(--error-bg); }
+.gap .fix { display: block; font-size: 13px; line-height: 16px; color: var(--success); font-weight: 600; padding-bottom: 2px; }
+.bank { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.word {
+  min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border-strong); background: var(--surface); font-size: 16px;
+  transition: opacity 160ms, transform 120ms var(--ease);
+}
+.word:active { transform: scale(.97); }
+.word.used { opacity: .3; pointer-events: none; }
+
+/* Results */
+.score { font-size: 44px; line-height: 48px; font-weight: 700; letter-spacing: -0.03em; }
+.review { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.review li { padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: 15px; line-height: 22px; }
+.review li b { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Content (Zeitbilder 5/6 und Unterlagen von eduvidual) ----------
+  var TOPICS = ["Humanismus", "Frühkapitalismus", "Reformation", "Entdeckungen", "Bauernkriege", "Dreißigjähriger Krieg"];
+
+  // Prüfungsfragen im Stil der Erwartungshorizonte: [Stoffgebiet 0–5, Frage, [Punkte der Musterlösung]]
+  var EXAM = [
+    [0, "Erläutere, warum die Jahre 1453, 1492 und 1517 als Wendepunkte zur Frühen Neuzeit gelten.", [
+      "1453: Die Osmanen erobern Konstantinopel; geflüchtete Lehrer verbreiten Altgriechisch im Westen.",
+      "1492: Kolumbus erreicht Amerika; Europäer beherrschen und beuten riesige fremde Länder aus.",
+      "1517: Luthers Thesen lösen die Reformation aus: Reformation statt Reform, Glaubenskrieg statt Glaubenseinheit."]],
+    [0, "Vergleiche Kultur und Bildung im Mittelalter mit der Frühen Neuzeit.", [
+      "Mittelalter: Blick aufs Jenseits; Bildung fast nur in Kloster- und Domschulen.",
+      "Frühe Neuzeit: Humanismus und Diesseitsorientierung, Mensch und Natur stehen im Mittelpunkt.",
+      "Private Schulen breiten sich aus.",
+      "Der Buchdruck wird zum Massenmedium."]],
+    [0, "Vergleiche Wirtschaft, Politik und Religion im Mittelalter mit der Frühen Neuzeit.", [
+      "Mittelalter: Feudalsystem, Ausbeutung der Bauern, Machtkampf Papst gegen Kaiser, unhinterfragte Autorität der Kirche.",
+      "Frühe Neuzeit: Aufschwung der Städte, neuer Unternehmertyp (Frühkapitalismus), Geburtsstunde des Bankwesens.",
+      "Mehr Produktivität durch technische Erfindungen.",
+      "Kaiser und Papst verlieren Macht, die Landesfürsten werden stärker; Kampf gegen Missstände in der Kirche."]],
+    [0, "Wie unterscheidet sich das Menschenbild der Renaissance vom Mittelalter? Verwende die Begriffe „Individuum“ und „ad fontes“.", [
+      "Wandel von der Jenseits- zur Diesseitsorientierung.",
+      "Der Mensch ist nicht mehr nur sterbliche Hülle, sondern Ebenbild Gottes; Sinnlichkeit und Lebenslust werden bejaht.",
+      "Das Individuum wird für Schaffenskraft und Originalität geschätzt: Künstler signieren ihre Werke.",
+      "„ad fontes“ (zurück zu den Quellen): Rückbesinnung auf die antiken Originale."]],
+    [0, "Beschreibe die Leistungen von Brunelleschi, Leonardo da Vinci und Donatello.", [
+      "Brunelleschi: verhalf der Zentralperspektive zum Durchbruch; baute die Kuppel des Doms in Florenz (1436) nach altrömischem Vorbild.",
+      "Leonardo da Vinci: Künstler und Universalgelehrter, Erfinder neuer Waffen, Anatomiestudien.",
+      "Donatello: Bronzeskulptur „David“, die erste Aktplastik seit der Antike."]],
+    [0, "Stelle das geozentrische dem heliozentrischen Weltbild gegenüber. Warum verurteilte die Kirche es 1616, und warum ist 1616 ein Wendepunkt?", [
+      "Geozentrisch: Die Erde ist der Mittelpunkt des Kosmos.",
+      "Heliozentrisch: Die Sonne steht im Mittelpunkt; die Erde ist einer von mehreren Planeten (Kepler: Ellipsenbahnen).",
+      "Die Kirche nannte es „formell häretisch“, weil es teilweise der Bibel widerspricht.",
+      "Statt der Theologie („Königin der Wissenschaft“) setzen sich nun die empirischen Naturwissenschaften durch (Kopernikus, Kepler, Galilei)."]],
+    [0, "Nimm Stellung: „Humanismus und Renaissance brachten eine Befreiung des Geistes für alle Menschen in Europa.“", [
+      "Über 90 % der Menschen konnten weiterhin nicht lesen und schreiben.",
+      "Bildung blieb einem kleinen, elitären Kreis (reiche Bürger, Adelige) vorbehalten.",
+      "Für diese Oberschicht stimmt die Aussage: neue Spielräume und viel mehr Bildung.",
+      "Fazit: eine Bewegung einer Elite, die aber den Grundstein für den langfristigen Wandel Europas legte."]],
+
+    [1, "Erkläre, warum Italien als Wiege des modernen Geld- und Kreditwesens gilt.", [
+      "„Internationale“ Goldmünzen (Florentiner, Dukaten).",
+      "Geldwechsler an ihrem Tisch (banca), daher das Wort „Bank“.",
+      "Wechselbriefe ermöglichten bargeldlosen Zahlungsverkehr.",
+      "Das kirchliche Zinsverbot (Wucherverbot) wurde z. B. mit Pfändern umgangen.",
+      "Arabische Ziffern und (doppelte) Buchführung."]],
+    [1, "Erkläre das Verlagssystem.", [
+      "Der Handelsherr (Verleger) kauft Rohstoffe im Großen ein.",
+      "Heimhandwerker verarbeiten sie zu einem festen, niedrigen Preis.",
+      "Der Verleger verkauft die Fertigwaren teuer auf dem Weltmarkt.",
+      "Früher selbstständige Handwerksmeister werden zu lohnabhängigen Heimarbeitern."]],
+    [1, "Vergleiche die mittelalterliche Zunftwirtschaft mit dem Frühkapitalismus.", [
+      "Ziel: Bedarfsdeckung gegenüber Gewinnmaximierung und Kapitalzuwachs.",
+      "Markt: lokal und regional gegenüber Fernhandel und Weltmarkt.",
+      "Preis: fester „gerechter Preis“ gegenüber freiem Marktpreis durch Angebot und Nachfrage.",
+      "Arbeit: unabhängige Zunftmeister gegenüber Lohnarbeit, Verlagssystem und Großbetrieben."]],
+    [1, "Erkläre die „Preisrevolution“ des 16. Jahrhunderts.", [
+      "Silberschwemme: Spanien führte ab Mitte des 16. Jh. viel Silber aus Bolivien ein → Inflation.",
+      "Gleichzeitig stieg die Bevölkerung.",
+      "Monopole wie die Fugger diktierten Preise; der Reichstagsbeschluss 1522/23 gegen Großkonzerne wurde nicht durchgesetzt.",
+      "Verlierer: Lohnarbeiter und städtische Unterschicht; Gewinner: Händler und Produzenten."]],
+
+    [2, "Welche Missstände in der Kirche bereiteten den Boden für die Reformation?", [
+      "Päpste in Avignon und das Große Schisma (zwei, dann drei Päpste) → Vertrauensverlust.",
+      "Simonie und Pfründenhandel: kirchliche Ämter wurden gekauft und verkauft.",
+      "Finanzhunger: Geld floss in Prunkbauten und päpstliche Kriege; Missbrauch des Ablasses.",
+      "Kleruskrise: ungebildete Bischöfe und Pfarrer.",
+      "Reformen von oben (Konziliarismus) scheiterten; Wyclif und Hus waren Wegbereiter."]],
+    [2, "Erläutere, wann und warum Luther seine 95 Thesen verfasste und wie er Tetzels Slogan entkräftete.", [
+      "1517 als akademische Diskussionsgrundlage für Theologen, gegen den Ablasshandel.",
+      "Wahre Reue ist ein lebenslanger innerer Prozess.",
+      "Kein Mensch kann Sünden gegen Geld vergeben.",
+      "Gottes Gnade ist ein freies Geschenk (sola gratia), das man allein durch den Glauben empfängt (sola fide)."]],
+    [2, "Vergleiche die Lehre Luthers mit der katholischen Kirche: Glaubensquelle, Seelenheil, Sakramente, Hierarchie.", [
+      "Glaubensquelle: Bibel und Tradition gegenüber nur der Heiligen Schrift (sola scriptura).",
+      "Seelenheil: Glaube und gute Werke gegenüber allein Gottes Gnade (sola gratia/sola fide).",
+      "Sakramente: sieben gegenüber zwei (Taufe und Abendmahl).",
+      "Hierarchie: Papst, Zölibat und Mönchtum gegenüber der Ablehnung von Papstprimat, Mönchtum und Zölibat."]],
+    [2, "Warum widerrief Luther 1521 in Worms nicht? Auf welche zwei Instanzen berief er sich?", [
+      "Er stellte sein Gewissen und den Bibeltext über Tradition, Konzile, Papst und Kaiser.",
+      "Instanz 1: das individuelle Gewissen bzw. klare Vernunftgründe.",
+      "Instanz 2: der Bibeltext."]],
+    [2, "Erkläre die vier Säulen des Augsburger Religionsfriedens von 1555.", [
+      "Rechtliche Gleichstellung: Augsburger Bekenntnis und katholische Lehre gleichberechtigt, Calvinisten bleiben rechtlos.",
+      "Cuius regio, eius religio: Der Landesfürst bestimmt die Konfession seiner Untertanen.",
+      "Ius emigrandi: Andersgläubige dürfen auswandern, müssen ihren Besitz aber oft mit Verlust verkaufen.",
+      "Geistlicher Vorbehalt: Wird ein geistlicher Fürst evangelisch, verliert er Amt und Gebiet."]],
+    [2, "Erkläre, warum Calvins Lehre in den Niederlanden, Schottland und England den Absolutismus erschwerte.", [
+      "Calvin erlaubte aktiven Widerstand gegen Herrscher, die gegen Gottes Gebote verstoßen.",
+      "Das rechtfertigte den Freiheitskampf der Niederlande gegen das katholische Spanien.",
+      "In Schottland (Presbyterianer) und England (Puritaner) stärkte es das Parlament gegenüber der Krone."]],
+    [2, "Ordne die Beschlüsse des Konzils von Trient den beiden Zielen der Gegenreformation zu.", [
+      "Abgrenzung (Glaubenssätze): Gnade und gute Werke, Schrift und Tradition, Vorrang des Papstes, Priester als Mittler, sieben Sakramente.",
+      "Innere Reform (Missstände beseitigen): Verbot von Ablassverkauf und Ämterkauf, Priesterseminare, Index und Inquisition, strenger Zölibat."]],
+    [2, "Beschreibe die Gegenreformation in Österreich und erkläre den Begriff „Geheimprotestantismus“.", [
+      "Reformationskommissionen zogen ab ca. 1590 mit Truppen durch Innerösterreich und die Alpenländer.",
+      "Sie schlossen evangelische Kirchen und Schulen, vertrieben Prediger, verbrannten Bücher und zwangen zu Beichte und Messe.",
+      "Konversionseid (Graz 1603): Treue, keine heimlichen Gottesdienste, Ketzer anzeigen, sonst Verlust von „Leib, Leben, Hab und Gut“.",
+      "Geheimprotestantismus: Viele Bauern (z. B. steirische Ramsau, Salzkammergut) blieben heimlich evangelisch, bis zum Toleranzpatent 1781."]],
+
+    [3, "Nenne die Motive und die technischen Voraussetzungen der europäischen Expansion.", [
+      "Motive: Gott (Mission), Gold (Reichtum, Handel), Gloria (Macht und Ruhm).",
+      "Nach 1453 sperrten die Osmanen die Handelswege; man suchte einen Seeweg nach Indien.",
+      "Schiffbau: die hochseetaugliche, wendige Karavelle.",
+      "Navigation und Kartografie: Kompass, Astrolabium, bessere Karten.",
+      "Militär: überlegene Waffen durch Schießpulver."]],
+    [3, "Beschreibe den biologischen Transfer zwischen Amerika und Europa.", [
+      "Nach Europa: Kartoffeln, Tomaten, Mais, Kakao, Tabak und massenhaft Gold und Silber.",
+      "Nach Amerika: Pferde, Rinder, Weizen, Zuckerrohr, Schießpulver.",
+      "Dazu Krankheitserreger wie Pocken und Masern, gegen die die Indigenen keine Abwehr hatten."]],
+    [3, "Beschreibe die Folgen der Expansion für Amerika und Afrika.", [
+      "Krankheiten, brutale Kriegsführung und Zwangsarbeit in Minen und auf Plantagen.",
+      "Kollaps: ganze Völker und Kulturen wurden in wenigen Jahrzehnten zerstört.",
+      "Weil Arbeitskräfte fehlten, wurden Millionen Menschen aus Afrika verschleppt und versklavt.",
+      "Es entstand ein globales, rassistisch begründetes Ausbeutungssystem; Europa wurde reich."]],
+    [3, "Warum ist der Begriff „Entdeckungen“ problematisch?", [
+      "In Amerika lebten bereits zig Millionen Menschen.",
+      "Der Begriff zeigt nur die europäische Sicht (Eurozentrismus).",
+      "Andere Begriffe: Eroberung, Invasion, Erstkontakt, Ausbeutung."]],
+
+    [4, "Nenne die Ursachen der Bauernkriege.", [
+      "Wirtschaftliche Not: ständig steigende Abgaben und Missernten.",
+      "Soziale Ungleichheit: Ausschluss vom politischen Leben, Abbau der dörflichen Selbstverwaltung.",
+      "Rechtliche Willkür: fremde Amtleute und das römische Recht.",
+      "Religiöse Ideale und ein „falsch verstandener“ Luther („Von der Freiheit eines Christenmenschen“)."]],
+    [4, "Beschreibe Verlauf und Ende des Bauernkriegs von 1525, auch in Österreich.", [
+      "Frühjahr 1525: Haufen aus Bauern, Städtern und Bergleuten in Süddeutschland, Tirol und Salzburg; Burgen und Klöster wurden niedergebrannt.",
+      "Österreich: Erfolge dank der Bergknappen; Residenz in Salzburg und Schladming besetzt.",
+      "Die Fürsten schlugen mit größeren Söldnerheeren zurück; über 100 000 Aufständische wurden getötet.",
+      "Brutale Strafgerichte unter Ferdinand I."]],
+    [4, "Wie verhielt sich Luther zum Bauernkrieg?", [
+      "Die Bauern beriefen sich auf seine Schrift „Von der Freiheit eines Christenmenschen“.",
+      "Luther lehnte die gewaltsamen Aufstände scharf ab.",
+      "In „Wider die mörderischen und räuberischen Rotten der Bauern“ rief er den Adel zur Niederschlagung auf."]],
+    [4, "Was wollte Michael Gaismair?", [
+      "Er war Tiroler Bauernführer und schrieb in der Schweiz die „Tiroler Landesordnung“.",
+      "Eine republikanische Ordnung mit Gleichheit aller Menschen.",
+      "Handel und Bergbau sollten verstaatlicht, Alte und Kranke staatlich versorgt werden.",
+      "Er wurde ermordet."]],
+    [4, "Welche Folgen hatten die Bauernkriege?", [
+      "Die Hoffnung der Landbevölkerung auf soziale Befreiung wurde zerschlagen.",
+      "Die Landesfürsten wurden stärker und führten die evangelische Kirche (landesherrliches Kirchenregiment).",
+      "Die Untertanen blieben politisch passiv und verloren Freiheiten.",
+      "Mehr Zensur und Überwachung der Buchdrucker; Ausbau des habsburgischen Herrschaftsapparates."]],
+
+    [5, "Warum hielt der Augsburger Religionsfrieden nicht, und welche Bündnisse entstanden?", [
+      "Die Calvinisten waren ausgeschlossen, und man stritt über die Auslegung.",
+      "1608 Union: protestantische Fürsten und Städte unter Friedrich von der Pfalz.",
+      "1609 Liga: katholische Fürsten, Bischöfe und Äbte unter Maximilian von Bayern, mit Kaiser, Papst und Spanien."]],
+    [5, "Nenne die Auslöser des Dreißigjährigen Krieges.", [
+      "Der Majestätsbrief (1609) wurde missachtet, protestantische Kirchen wurden geschlossen.",
+      "Prager Fenstersturz 1618.",
+      "Die Böhmen wählten Friedrich von der Pfalz („Winterkönig“) zum König.",
+      "Schlacht am Weißen Berg 1620: Maximilian I. und Tilly siegten; Böhmen wurde habsburgisches Erbkönigtum."]],
+    [5, "Beschreibe die Rolle Albrecht von Wallensteins.", [
+      "Er stellte ein Söldnerheer (ca. 50 000 Mann) auf und vermietete es an den Kaiser.",
+      "Grundsatz: „Der Krieg muss den Krieg ernähren.“",
+      "Zu mächtig geworden, wurde er abgesetzt; gegen die Schweden wieder eingesetzt (120 000 Mann).",
+      "1634 wurde er getötet."]],
+    [5, "Was unterscheidet einen Söldner von einem Soldaten? Beschreibe das Söldnerleben am Beispiel Peter Hagendorfs.", [
+      "Ein Söldner kämpft gegen Bezahlung und ist nicht dauerhaft an eine Seite gebunden; er ist trotzdem Soldat.",
+      "Hagendorf kämpfte nacheinander für Venedig, die Kaiserlichen und die Schweden, teils nach Gefangennahme.",
+      "Märsche und Quartiere, mal Überfluss, mal Not; bei Magdeburg 1631 schwer verwundet.",
+      "Plünderungen: Die Zivilbevölkerung war der Gewalt der Soldaten ausgeliefert."]],
+    [5, "Nenne die Ergebnisse des Westfälischen Friedens und die Folgen des Krieges.", [
+      "Reichsstände erhalten Mitbestimmung und volle Staatshoheit; der Kaiser wird geschwächt; das Reich zerfällt in hunderte Herrschaftsgebiete.",
+      "Gewinner: Frankreich und Schweden; die Niederlande und die Schweiz werden unabhängig.",
+      "Katholiken, Lutheraner und Calvinisten sind gleichberechtigt.",
+      "Folgen: Bevölkerung um ein Drittel kleiner, Hungersnöte, Seuchen, zerstörte Städte und Kirchen."]]
+  ];
+
+  // Zuordnen: zwei Kategorien je Set
+  var SORTS = [
+    { name: "Konzil von Trient", sub: "Abgrenzung oder innere Reform?", cats: ["Abgrenzung", "Innere Reform"], items: [
+      ["Erlösung durch Gnade und gute Werke", 0], ["Schrift und Tradition", 0], ["Vorrang des Papstes", 0],
+      ["Priester als Mittler zu Gott", 0], ["Alle sieben Sakramente", 0],
+      ["Verbot des Ablassverkaufs", 1], ["Verbot der Simonie (Ämterkauf)", 1], ["Priesterseminare", 1],
+      ["Index verbotener Bücher", 1], ["Strenger Zölibat", 1]] },
+    { name: "Katholisch oder Luther?", sub: "Wer lehrt das?", cats: ["Katholische Kirche", "Luther"], items: [
+      ["Bibel und Tradition", 0], ["Glaube und gute Werke", 0], ["Sieben Sakramente", 0], ["Papst als Oberhaupt", 0], ["Ablass möglich", 0],
+      ["Nur die Heilige Schrift", 1], ["Allein durch Gottes Gnade", 1], ["Taufe und Abendmahl", 1],
+      ["Priestertum aller Getauften", 1], ["Keine Mönche, kein Zölibat", 1]] },
+    { name: "Mittelalter oder Frühe Neuzeit?", sub: "Wohin gehört das?", cats: ["Mittelalter", "Frühe Neuzeit"], items: [
+      ["Jenseitsorientierung", 0], ["Kloster- und Domschulen", 0], ["Feudalsystem", 0], ["Machtkampf Papst gegen Kaiser", 0],
+      ["Unhinterfragte Autorität der Kirche", 0],
+      ["Diesseitsorientierung", 1], ["Private Schulen", 1], ["Buchdruck als Massenmedium", 1], ["Geburtsstunde des Bankwesens", 1],
+      ["Erstarkende Landesfürsten", 1]] },
+    { name: "Zunft oder Frühkapitalismus?", sub: "Welche Wirtschaftsform?", cats: ["Zunftwirtschaft", "Frühkapitalismus"], items: [
+      ["Bedarfsdeckung", 0], ["Lokaler Markt", 0], ["Fester „gerechter Preis“", 0], ["Zunftmeister in eigener Werkstatt", 0],
+      ["Gewinnmaximierung", 1], ["Weltmarkt und Fernhandel", 1], ["Preis durch Angebot und Nachfrage", 1], ["Lohnarbeit und Verlagssystem", 1],
+      ["Monopole", 1]] },
+    { name: "Union oder Liga?", sub: "Welches Bündnis?", cats: ["Union (1608)", "Liga (1609)"], items: [
+      ["Protestantische Fürsten und Städte", 0], ["Friedrich von der Pfalz", 0], ["Verbündete: Dänemark und Schweden", 0], ["Verbündete: Niederlande", 0],
+      ["Katholische Fürsten, Bischöfe und Äbte", 1], ["Maximilian von Bayern", 1], ["Verbündete: Kaiser und Papst", 1], ["Verbündeter: Spanien", 1],
+      ["Feldherr Tilly", 1]] },
+    { name: "Nach Europa oder nach Amerika?", sub: "Biologischer Transfer", cats: ["Nach Europa", "Nach Amerika"], items: [
+      ["Kartoffeln", 0], ["Tomaten", 0], ["Mais", 0], ["Kakao", 0], ["Tabak", 0], ["Gold und Silber", 0], ["Truthahn", 0],
+      ["Pferde", 1], ["Rinder", 1], ["Weizen", 1], ["Zuckerrohr", 1], ["Schießpulver", 1], ["Pocken und Masern", 1]] }
+  ];
+
+  // Zeitleiste: [Jahr zum Sortieren, angezeigtes Jahr, Ereignis]
+  var EVENTS = [
+    [1309, "1309", "Die Päpste ziehen nach Avignon"], [1378, "1378", "Beginn des Großen Schismas"],
+    [1415, "1415", "Jan Hus wird in Konstanz verbrannt"], [1450, "um 1450", "Erfindung des modernen Buchdrucks"],
+    [1453, "1453", "Die Osmanen erobern Konstantinopel"], [1492, "1492", "Kolumbus erreicht Amerika"],
+    [1494, "1494", "Vertrag von Tordesillas"], [1498, "1498", "Vasco da Gama erreicht Indien"],
+    [1517, "1517", "Luthers 95 Thesen"], [1519, "1519", "Cortés beginnt die Eroberung Mexikos"],
+    [1521, "1521", "Reichstag zu Worms"], [1522, "1522", "Aufstand der Reichsritter"],
+    [1525, "1525", "Großer Bauernkrieg"], [1529, "1529", "Vertrag von Saragossa"],
+    [1530, "1530", "Augsburger Bekenntnis"], [1532, "1532", "Pizarro erobert das Inkareich"],
+    [1534, "1534", "Heinrich VIII. wird Oberhaupt der englischen Kirche"], [1545, "1545", "Beginn des Konzils von Trient"],
+    [1555, "1555", "Augsburger Religionsfrieden"], [1598, "1598", "Edikt von Nantes"],
+    [1603, "1603", "Konversionseid in Graz"], [1608, "1608", "Gründung der Union"],
+    [1609, "1609", "Majestätsbrief und Gründung der Liga"], [1616, "1616", "Kirche erklärt das heliozentrische Weltbild für ketzerisch"],
+    [1618, "1618", "Prager Fenstersturz"], [1620, "1620", "Schlacht am Weißen Berg"],
+    [1630, "1630", "Gustav Adolf von Schweden greift ein"], [1631, "1631", "Erstürmung Magdeburgs"],
+    [1634, "1634", "Tod Wallensteins"], [1648, "1648", "Westfälischer Friede"],
+    [1781, "1781", "Toleranzpatent Josephs II."]
+  ];
+
+  // Lückentexte: Lücken stehen in [eckigen Klammern]
+  var GAPS = [
+    { name: "Die Bauernkriege", text: "Ursachen waren steigende [Abgaben] und Missernten, der Abbau der dörflichen Selbstverwaltung und Luthers Schrift „Von der [Freiheit] eines Christenmenschen“. Die Bauern forderten die Abschaffung der [Leibeigenschaft]. 1525 brannten bewaffnete [Haufen] Burgen und Klöster nieder. Die Fürsten schlugen den Aufstand mit [Söldnerheeren] nieder; über 100 000 Menschen starben. Luther rief den [Adel] zur Niederschlagung auf. Der Tiroler Bauernführer Michael [Gaismair] schrieb die „Tiroler Landesordnung“. Danach führten die [Landesfürsten] die evangelische Kirche." },
+    { name: "Augsburger Religionsfrieden", text: "1555 wurde das Augsburger [Bekenntnis] mit der katholischen Lehre gleichgestellt, die [Calvinisten] blieben aber rechtlos. Nach dem Grundsatz „Cuius regio, eius [religio]“ bestimmte der [Landesfürst] die Konfession. Andersgläubige durften [auswandern]. Wurde ein geistlicher Fürst evangelisch, verlor er nach dem geistlichen [Vorbehalt] Amt und Gebiet." },
+    { name: "Luther und die Reformation", text: "Tetzel verkaufte [Ablassbriefe] für den Bau des Petersdoms. 1517 veröffentlichte Luther seine 95 [Thesen]. Für ihn war allein die Heilige [Schrift] Glaubensquelle, und der Mensch wird allein durch Gottes [Gnade] erlöst. Er ließ nur Taufe und [Abendmahl] als Sakramente gelten. 1521 widerrief er in [Worms] nicht. Auf der [Wartburg] übersetzte er das Neue Testament ins Deutsche." },
+    { name: "Kirche in der Krise", text: "Von 1309 bis 1377 residierten die Päpste in [Avignon]. Im Großen [Schisma] gab es zwei, später drei Päpste. Das Konzil von [Konstanz] beendete 1417 die Spaltung. Der Kauf kirchlicher Ämter heißt [Simonie]. Der Böhme Jan [Hus] wurde 1415 als Ketzer verbrannt; der Engländer John [Wyclif] übersetzte die Bibel ins Englische." },
+    { name: "Frühkapitalismus", text: "Der Tisch der Geldwechsler hieß auf Italienisch [banca]. Mit [Wechselbriefen] konnte man ohne Bargeld zahlen. Im [Verlagssystem] verarbeiteten Heimhandwerker Rohstoffe billig, und der Händler verkaufte die Waren teuer. Die [Fugger] aus Augsburg besaßen ein Monopol auf Kupfer. Silber aus [Bolivien] führte zu starker [Inflation]." },
+    { name: "Der Westfälische Friede", text: "Der Krieg endete [1648] mit dem Westfälischen Frieden, verhandelt in Münster und [Osnabrück]. Die Reichsstände erhielten volle [Staatshoheit], der Kaiser wurde geschwächt. Gewinner waren [Frankreich] und Schweden. Die Niederlande und die [Schweiz] wurden unabhängig. Die Bevölkerung sank um etwa ein [Drittel]." }
+  ];
+
+  // ---------- Helpers ----------
+  var app = document.getElementById("app");
+  var STORE = "geschichte-trainer-v1";
+  function load() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } }
+  function save(key, val) { try { var s = load(); s[key] = val; localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) {} }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var I = {
+    back: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
+    chev: '<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+    exam: '<svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/></svg>',
+    sort: '<svg viewBox="0 0 24 24"><path d="M4 6h7M4 12h7M4 18h7M15 8l3-3 3 3M18 5v14"/></svg>',
+    time: '<svg viewBox="0 0 24 24"><path d="M3 12h18"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/></svg>',
+    gap: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h5M15 12h5M4 17h10"/><path d="M10 14h4"/></svg>'
+  };
+  function top(title, count) {
+    return '<div class="top"><button type="button" class="back" data-home>' + I.back + 'Übersicht</button>' +
+      (count ? '<span class="count">' + count + "</span>" : "") + "</div>" +
+      (title ? '<p class="label">' + esc(title) + "</p>" : "");
+  }
+  function bar(done, total) { return '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + done + '"><i style="width:' + (total ? 100 * done / total : 0) + '%"></i></div>'; }
+  function bindHome() { var b = app.querySelector("[data-home]"); if (b) b.onclick = home; }
+  function show(html) { app.innerHTML = html; bindHome(); window.scrollTo(0, 0); }
+
+  // ---------- Home ----------
+  function home() {
+    var st = load();
+    function best(k) { return st[k] ? '<span class="chip">' + st[k] + "</span>" : ""; }
+    var rows = [
+      ["exam", "Prüfungsfragen", "Offene Fragen wie im Test, mit Musterlösung zum Abhaken", best("exam")],
+      ["sort", "Zuordnen", "Luther oder katholisch? Zunft oder Frühkapitalismus? …", best("sort")],
+      ["time", "Zeitleiste", "Bringe fünf Ereignisse in die richtige Reihenfolge", best("time")],
+      ["gap", "Lückentext", "Die Zusammenfassungen mit fehlenden Begriffen", best("gap")]
+    ];
+    show('<div class="intro rise"><h1>Geschichte-Trainer</h1><p class="muted small">Die frühe Neuzeit: Zeitbilder 5/6 und die Unterlagen aus dem Unterricht.</p></div>' +
+      '<ul class="rows">' + rows.map(function (r, n) {
+        return '<li class="rise" style="--i:' + (n + 1) + '"><button type="button" class="row" data-mode="' + r[0] + '"><span class="tile">' + I[r[0]] + '</span>' +
+          '<span class="row-text"><strong>' + r[1] + "</strong><span>" + r[2] + "</span></span>" + r[3] + I.chev + "</button></li>";
+      }).join("") + "</ul>");
+    app.querySelectorAll("[data-mode]").forEach(function (b) {
+      b.onclick = function () { ({ exam: examStart, sort: sortStart, time: timeStart, gap: gapStart })[b.dataset.mode](); };
+    });
+  }
+
+  // ---------- Prüfungsfragen ----------
+  var examFilter = -1;
+  function examStart() {
+    var list = shuffle(EXAM.filter(function (q) { return examFilter < 0 || q[0] === examFilter; }));
+    if (examFilter < 0) list = list.slice(0, 8);
+    var i = 0, got = 0, max = 0;
+    function filters() {
+      return '<div class="filters" role="group" aria-label="Stoffgebiet">' +
+        [["Gemischt (8)", -1]].concat(TOPICS.map(function (t, n) { return [t, n]; })).map(function (f) {
+          return '<button type="button" class="filter" data-f="' + f[1] + '" aria-pressed="' + (examFilter === f[1]) + '">' + esc(f[0]) + "</button>";
+        }).join("") + "</div>";
+    }
+    function draw() {
+      if (i >= list.length) return done();
+      var q = list[i];
+      show(top("Prüfungsfragen", (i + 1) + " von " + list.length) + bar(i, list.length) + (i === 0 ? filters() : "") +
+        '<div class="card rise"><p class="label">' + esc(TOPICS[q[0]]) + "</p><h2>" + esc(q[1]) + "</h2>" +
+        '<textarea id="ans" placeholder="Deine Antwort in Stichworten (freiwillig)" aria-label="Deine Antwort"></textarea>' +
+        '<div id="sol"></div></div><div class="actions"><button type="button" class="btn btn-primary" id="go">Lösung zeigen</button></div>');
+      app.querySelectorAll("[data-f]").forEach(function (b) {
+        b.onclick = function () { examFilter = Number(b.dataset.f); examStart(); };
+      });
+      app.querySelector("#go").onclick = reveal;
+    }
+    function reveal() {
+      var q = list[i];
+      app.querySelector("#sol").innerHTML = '<p class="label" style="margin-top:20px">Musterlösung · tippe an, was du hattest</p><ul class="points">' +
+        q[2].map(function (p, n) { return '<li><label class="point" style="--i:' + n + '"><input type="checkbox"><span>' + esc(p) + "</span></label></li>"; }).join("") + "</ul>";
+      var go = app.querySelector("#go");
+      go.textContent = i + 1 < list.length ? "Weiter" : "Zum Ergebnis";
+      go.onclick = function () {
+        got += app.querySelectorAll(".point input:checked").length; max += q[2].length; i++; draw();
+      };
+    }
+    function done() {
+      save("exam", got + "/" + max);
+      show(top("Prüfungsfragen") + '<div class="card rise"><p class="label">Ergebnis</p><p class="score">' + got + "<span class=\"muted\" style=\"font-size:26px\"> / " + max + "</span></p>" +
+        '<p class="muted small" style="margin-top:8px">Punkte aus der Musterlösung, die du genannt hast. Im Test zählen ganze Sätze mit Begründung.</p></div>' +
+        '<div class="actions"><button type="button" class="btn btn-primary" id="again">Neue Runde</button><button type="button" class="btn btn-secondary" data-home2>Fertig</button></div>');
+      app.querySelector("#again").onclick = examStart;
+      app.querySelector("[data-home2]").onclick = home;
+    }
+    draw();
+  }
+
+  // ---------- Zuordnen ----------
+  function sortStart() {
+    show(top("Zuordnen") + '<ul class="rows">' + SORTS.map(function (s, n) {
+      return '<li class="rise" style="--i:' + n + '"><button type="button" class="row" data-s="' + n + '"><span class="row-text"><strong>' + esc(s.name) + "</strong><span>" + esc(s.sub) + " · " + s.items.length + " Begriffe</span></span>" + I.chev + "</button></li>";
+    }).join("") + "</ul>");
+    app.querySelectorAll("[data-s]").forEach(function (b) { b.onclick = function () { sortRun(SORTS[Number(b.dataset.s)]); }; });
+  }
+  function sortRun(set) {
+    var items = shuffle(set.items), i = 0, right = 0, wrong = [];
+    function draw() {
+      if (i >= items.length) return done();
+      var it = items[i];
+      show(top(set.name, (i + 1) + " von " + items.length) + bar(i, items.length) +
+        '<div class="card item" id="it">' + esc(it[0]) + "</div>" +
+        '<div class="cats">' + set.cats.map(function (c, n) { return '<button type="button" class="cat" data-c="' + n + '">' + esc(c) + "</button>"; }).join("") + "</div>" +
+        '<div id="fb"></div><div class="actions" id="act"></div>');
+      app.querySelectorAll("[data-c]").forEach(function (b) {
+        b.onclick = function () {
+          var pick = Number(b.dataset.c), ok = pick === it[1];
+          app.querySelectorAll("[data-c]").forEach(function (x) { x.disabled = true; });
+          app.querySelector('[data-c="' + it[1] + '"]').classList.add("right");
+          if (!ok) { b.classList.add("wrong"); wrong.push(it); } else right++;
+          app.querySelector("#it").classList.add(ok ? "ok" : "bad");
+          app.querySelector("#fb").innerHTML = '<div class="feedback ' + (ok ? "ok" : "bad") + '"><strong>' + (ok ? "Richtig!" : "Leider falsch.") + "</strong> " +
+            esc(it[0]) + " gehört zu „" + esc(set.cats[it[1]]) + "“.</div>";
+          var act = app.querySelector("#act");
+          act.innerHTML = '<button type="button" class="btn btn-primary">' + (i + 1 < items.length ? "Weiter" : "Zum Ergebnis") + "</button>";
+          var nx = act.firstChild; nx.focus(); nx.onclick = function () { i++; draw(); };
+        };
+      });
+    }
+    function done() {
+      save("sort", right + "/" + items.length);
+      show(top(set.name) + '<div class="card rise"><p class="label">Ergebnis</p><p class="score">' + right + '<span class="muted" style="font-size:26px"> / ' + items.length + "</span></p></div>" +
+        (wrong.length ? '<p class="label" style="margin-top:24px">Noch üben</p><ul class="review">' + wrong.map(function (w) { return "<li><b>" + esc(w[0]) + "</b>" + esc(set.cats[w[1]]) + "</li>"; }).join("") + "</ul>" : "") +
+        '<div class="actions"><button type="button" class="btn btn-primary" id="again">Nochmal</button><button type="button" class="btn btn-secondary" id="other">Anderes Thema</button></div>');
+      app.querySelector("#again").onclick = function () { sortRun(set); };
+      app.querySelector("#other").onclick = sortStart;
+    }
+    draw();
+  }
+
+  // ---------- Zeitleiste ----------
+  var timeRound = 0, timeRight = 0;
+  function timeStart() { timeRound = 0; timeRight = 0; timeRun(); }
+  function timeRun() {
+    var round = shuffle(EVENTS).slice(0, 5), placed = [], checked = false;
+    var sorted = round.slice().sort(function (a, b) { return a[0] - b[0]; });
+    function draw() {
+      var pool = round.filter(function (e) { return placed.indexOf(e) < 0; });
+      show(top("Zeitleiste", "Runde " + (timeRound + 1)) +
+        '<p class="small muted" style="margin-bottom:16px">Tippe die Ereignisse vom frühesten zum spätesten an. Tippe oben auf ein Ereignis, um es zurückzulegen.</p>' +
+        '<p class="label">Deine Reihenfolge</p><div class="order" style="margin:8px 0 20px">' +
+        (placed.length ? placed.map(function (e, n) {
+          var cls = checked ? (e === sorted[n] ? " ok" : " bad") : "";
+          return '<button type="button" class="ev' + cls + '" data-p="' + n + '"' + (checked ? " disabled" : "") + '><span class="n">' + (n + 1) + "</span><span>" + esc(e[2]) + "</span>" + (checked ? '<span class="yr">' + esc(e[1]) + "</span>" : "") + "</button>";
+        }).join("") : '<div class="empty">Noch leer</div>') + "</div>" +
+        (pool.length ? '<p class="label">Ereignisse</p><div class="pool" style="margin-top:8px">' + pool.map(function (e, n) {
+          return '<button type="button" class="ev" style="--i:' + n + '" data-e="' + round.indexOf(e) + '"><span class="n">·</span><span>' + esc(e[2]) + "</span></button>";
+        }).join("") + "</div>" : "") +
+        (checked ? solution() : "") +
+        '<div class="actions">' + (checked
+          ? '<button type="button" class="btn btn-primary" id="next">Neue Runde</button><button type="button" class="btn btn-secondary" data-home2>Fertig</button>'
+          : '<button type="button" class="btn btn-primary" id="check"' + (pool.length ? " disabled" : "") + ">Prüfen</button>") + "</div>");
+      app.querySelectorAll("[data-e]").forEach(function (b) { b.onclick = function () { placed.push(round[Number(b.dataset.e)]); draw(); }; });
+      app.querySelectorAll("[data-p]").forEach(function (b) { b.onclick = function () { placed.splice(Number(b.dataset.p), 1); draw(); }; });
+      var c = app.querySelector("#check"); if (c) c.onclick = function () {
+        checked = true; var ok = placed.every(function (e, n) { return e === sorted[n]; });
+        timeRound++; if (ok) timeRight++; save("time", timeRight + "/" + timeRound); draw();
+      };
+      var nx = app.querySelector("#next"); if (nx) nx.onclick = timeRun;
+      var h2 = app.querySelector("[data-home2]"); if (h2) h2.onclick = home;
+    }
+    function solution() {
+      var ok = placed.every(function (e, n) { return e === sorted[n]; });
+      return '<div class="feedback ' + (ok ? "ok" : "bad") + '"><strong>' + (ok ? "Alles richtig!" : "Nicht ganz.") + "</strong> " +
+        (ok ? "" : "Richtig ist: " + sorted.map(function (e) { return esc(e[1]) + " " + esc(e[2]); }).join(" → ")) + "</div>";
+    }
+    draw();
+  }
+
+  // ---------- Lückentext ----------
+  function gapStart() {
+    var st = load();
+    show(top("Lückentext") + '<ul class="rows">' + GAPS.map(function (g, n) {
+      var k = (g.text.match(/\[/g) || []).length;
+      return '<li class="rise" style="--i:' + n + '"><button type="button" class="row" data-g="' + n + '"><span class="row-text"><strong>' + esc(g.name) + "</strong><span>" + k + " Lücken</span></span>" +
+        (st["gap" + n] ? '<span class="chip">' + st["gap" + n] + "</span>" : "") + I.chev + "</button></li>";
+    }).join("") + "</ul>");
+    app.querySelectorAll("[data-g]").forEach(function (b) { b.onclick = function () { gapRun(Number(b.dataset.g)); }; });
+  }
+  function gapRun(idx) {
+    var g = GAPS[idx], parts = g.text.split(/\[([^\]]+)\]/), answers = [], fill = [], sel = 0, checked = false;
+    for (var p = 1; p < parts.length; p += 2) { answers.push(parts[p]); fill.push(null); }
+    var bank = shuffle(answers.map(function (a, n) { return { w: a, n: n }; }));
+    function draw() {
+      var html = "", k = 0;
+      parts.forEach(function (part, n) {
+        if (n % 2 === 0) { html += esc(part); return; }
+        var f = fill[k], cls = checked ? (f !== null && bank[f].w === answers[k] ? " ok" : " bad") : (k === sel ? " sel" : "");
+        html += '<button type="button" class="gap' + cls + '" data-k="' + k + '" aria-label="Lücke ' + (k + 1) + '">' +
+          (checked && !(f !== null && bank[f].w === answers[k]) ? '<span class="fix">' + esc(answers[k]) + "</span>" : "") +
+          (f !== null ? esc(bank[f].w) : "&nbsp;") + "</button>";
+        k++;
+      });
+      var correct = fill.filter(function (f, n) { return f !== null && bank[f].w === answers[n]; }).length;
+      show(top(g.name) + '<div class="card rise"><p class="gaptext">' + html + "</p></div>" +
+        (checked ? '<div class="feedback ' + (correct === answers.length ? "ok" : "bad") + '"><strong>' + correct + " von " + answers.length + " richtig.</strong> " +
+          (correct === answers.length ? "Sehr gut!" : "Die richtigen Begriffe stehen grün über den falschen Lücken.") + "</div>"
+          : '<div class="bank" role="group" aria-label="Begriffe">' + bank.map(function (b, n) {
+            return '<button type="button" class="word' + (fill.indexOf(n) >= 0 ? " used" : "") + '" data-w="' + n + '">' + esc(b.w) + "</button>";
+          }).join("") + "</div>") +
+        '<div class="actions">' + (checked
+          ? '<button type="button" class="btn btn-primary" id="again">Nochmal</button><button type="button" class="btn btn-secondary" id="other">Anderer Text</button>'
+          : '<button type="button" class="btn btn-primary" id="check"' + (fill.indexOf(null) >= 0 ? " disabled" : "") + ">Prüfen</button>") + "</div>");
+      if (!checked) {
+        app.querySelectorAll("[data-k]").forEach(function (b) {
+          b.onclick = function () { var k2 = Number(b.dataset.k); if (fill[k2] !== null) fill[k2] = null; sel = k2; draw(); };
+        });
+        app.querySelectorAll("[data-w]").forEach(function (b) {
+          b.onclick = function () {
+            if (fill[sel] !== null) sel = fill.indexOf(null);
+            if (sel < 0) return;
+            fill[sel] = Number(b.dataset.w);
+            var next = fill.indexOf(null, sel); sel = next >= 0 ? next : fill.indexOf(null);
+            draw();
+          };
+        });
+        app.querySelector("#check").onclick = function () { checked = true; draw(); save("gap" + idx, correct2() + "/" + answers.length); save("gap", correct2() + "/" + answers.length); };
+      } else {
+        app.querySelector("#again").onclick = function () { gapRun(idx); };
+        app.querySelector("#other").onclick = gapStart;
+      }
+    }
+    function correct2() { return fill.filter(function (f, n) { return f !== null && bank[f].w === answers[n]; }).length; }
+    draw();
+  }
+
+  home();
+})();
+</script>
+</body>
+</html>

@@ -29,6 +29,12 @@ addTopic({
     ["Folgen für die Untertanen", "Jahrhundertelang politisch passiv: Polizei, Spitzel und Zensur"],
     ["Zensur", "Buchdrucker mussten ihre Werke vor dem Erscheinen vorlegen"],
     ["„Schwarze Kabinette“", "Dort wurden Briefe der Reichspost (Thurn und Taxis) heimlich geöffnet und gelesen"],
+    // Aus dem Unterricht (eduvidual: Erwartungshorizont, PPT, Zusammenfassung)
+    ["Ziel der Reichsritter", "Die Macht der Fürsten und Reichsstände brechen"],
+    ["Abbau der Selbstverwaltung", "Die Bauern verloren Mitsprache in ihren Dörfern"],
+    ["Was die Bauern 1525 taten", "Bewaffnete Haufen aus Bauern, Städtern und Bergleuten brannten Burgen und Klöster nieder"],
+    ["Landesherrliches Kirchenregiment", "Die Landesfürsten führen die evangelische Kirche"],
+    ["Habsburgischer Herrschaftsapparat", "Wurde nach dem Bauernkrieg ausgebaut; die Untertanen verloren Freiheiten"],
   ],
   questions: [
     { q: "Warum verloren die Reichsritter an Bedeutung?", options: ["Kriege entschieden nun Landsknechte mit Feuerwaffen", "Der Papst verbot das Rittertum", "Sie wurden alle Bauern", "Die Osmanen besiegten sie"], answer: "Kriege entschieden nun Landsknechte mit Feuerwaffen", explain: "Ihre Rolle als reitende Einzelkämpfer war vorbei." },
@@ -45,5 +51,8 @@ addTopic({
     { q: "Wer bestrafte die Bauern in Österreich besonders grausam?", options: ["Ferdinand I.", "Karl V.", "Joseph II.", "Maximilian II."], answer: "Ferdinand I.", explain: "Er war der neue Herr der österreichischen Länder." },
     { q: "Welche Folge hatte die Niederlage der Bauern?", options: ["Die Untertanen blieben lange politisch passiv", "Die Leibeigenschaft wurde abgeschafft", "Die Bauern bekamen Mitsprache", "Die Zensur wurde abgeschafft"], answer: "Die Untertanen blieben lange politisch passiv", explain: "Die Obrigkeit baute Polizei, Spitzel und Zensur aus." },
     { q: "Was waren die „schwarzen Kabinette“?", options: ["Orte, an denen Briefe heimlich geöffnet wurden", "Geheime Bauernversammlungen", "Gefängnisse für Ritter", "Räume für verbotene Bücher"], answer: "Orte, an denen Briefe heimlich geöffnet wurden", explain: "Die Reichspost war ein Monopol der Familie Thurn und Taxis." },
+    { q: "Was wollten die Reichsritter 1522 erreichen?", options: ["Die Macht der Fürsten brechen", "Die Leibeigenschaft abschaffen", "Einen neuen Papst wählen", "Amerika erobern"], answer: "Die Macht der Fürsten brechen", explain: "Ihr Aufstand endete in einer völligen Niederlage." },
+    { q: "Wer brannte 1525 Burgen und Klöster nieder?", options: ["Haufen aus Bauern, Städtern und Bergleuten", "Schwedische Truppen", "Die Jesuiten", "Die Reichsritter"], answer: "Haufen aus Bauern, Städtern und Bergleuten", explain: "Nach ersten Erfolgen schlugen die Fürsten mit Söldnern zurück." },
+    { q: "Wer führte nach dem Bauernkrieg die evangelische Kirche?", options: ["Die Landesfürsten", "Die Bauern", "Der Papst", "Die Bergknappen"], answer: "Die Landesfürsten", explain: "Man nennt das landesherrliches Kirchenregiment." },
   ],
 });
