@@ -20,6 +20,9 @@ window.SUBJECTS = [
     short: "Es",             // two letters on the subject's tile
     color: "#D46A6A",        // the subject's colour
     blurb: "Grammatik und Vokabeln aus Alegría 1 und 2",
+    links: [
+      { kind: "buch", name: "Alegría 1", sub: "Libro + Cuaderno auf digi4school", url: "https://digi4school.at/ebook/25s7dqsfed9h" },
+    ],
     topics: [
       { id: "grammatik", group: "Deine Trainer", name: "Grammatik-Training", blurb: "15 Themen: Lernen, Üben, Prüfung, Generator, E-Mail", page: "subjects/spanish/pages/grammatik-training.html" },
       { id: "vokabeltrainer", group: "Deine Trainer", name: "Vokabeltrainer", blurb: "Alle Wörter mit Tippen, Anhören und Fehlerliste", page: "subjects/spanish/pages/vokabeltrainer.html" },
