@@ -139,6 +139,8 @@
 
   window.addEventListener("hashchange", () => {
     const h = currentHash();
+    // Count each screen as a page view (see the GoatCounter lines in index.html).
+    if (window.goatcounter && window.goatcounter.count) window.goatcounter.count();
     if (replacing) {
       visited[visited.length - 1] = h;
       replacing = false;
@@ -807,7 +809,7 @@
       '<form class="idea-form" novalidate>' +
       '<label class="field"><span class="field-label">Deine Idee</span>' +
       '<textarea name="idea" rows="6" placeholder="Zum Beispiel: Bitte auch Englisch-Vokabeln, oder: Im Quiz ist eine Antwort falsch …"></textarea></label>' +
-      '<label class="field"><span class="field-label">Dein Name <span class="opt">(freiwillig)</span></span>' +
+      '<label class="field"><span class="field-label">Dein Name</span>' +
       '<input name="sender" type="text" autocomplete="name"></label>' +
       '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
       '<p class="idea-status" role="status"></p>' +
@@ -819,11 +821,12 @@
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const idea = field("idea").value.trim();
+      const name = field("sender").value.trim();
       if (field("_honey").value) return;
-      if (!idea) {
-        status.textContent = "Schreib zuerst deine Idee in das Feld.";
+      if (!idea || !name) {
+        status.textContent = !idea ? "Schreib zuerst deine Idee in das Feld." : "Schreib bitte noch deinen Namen dazu.";
         status.className = "idea-status bad";
-        field("idea").focus();
+        field(!idea ? "idea" : "sender").focus();
         return;
       }
       const btn = form.querySelector("button");
@@ -835,7 +838,7 @@
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           _subject: "Neue Idee für 6a Lernübungen", _template: "table", _captcha: "false",
-          Name: field("sender").value.trim() || "(ohne Namen)", Idee: idea,
+          Name: name, Idee: idea,
         }),
       })
         .then((r) => r.json())
