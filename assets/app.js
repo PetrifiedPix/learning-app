@@ -2,6 +2,7 @@
   Lern-App. Plain JavaScript with no build step.
   Screens: Home (#/) → Subject (#/spanisch) → Topic (#/spanisch/a1-u1)
   → Session (#/spanisch/a1-u1/karten | quiz | fehler).
+  Also: #/ideen (suggestion form) and #/uebersetzer/spanisch | latein (the "…" menu).
   Content comes from subjects/index.js and one file per topic.
 */
 (function () {
@@ -88,6 +89,7 @@
     plus: '<path d="M12 5v14M5 12h14"/>',
     book: '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19"/>',
     course: '<path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.2V16c0 1.2 2.2 3 5 3s5-1.8 5-3v-4.8"/>',
+    more: '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
   };
   function svg(name, cls) {
     return '<svg class="' + (cls || "ic") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -107,8 +109,39 @@
         ? '<a class="bar-back" href="' + o.up + '" data-up="' + o.up + '">' + svg("back") + "<span>" + esc(o.upLabel) + "</span></a>"
         : "") + "</div>" +
       '<div class="bar-title">' + esc(o.title) + "</div>" +
-      '<div class="bar-end">' + (o.end || "") + "</div></div></header>";
+      '<div class="bar-end">' + (o.end || "") + moreMenu() + "</div></div></header>";
   }
+
+  // The "…" button in the top right: opens the translators (assets/uebersetzer.js).
+  const TOOLS = [
+    { href: "#/uebersetzer/spanisch", subject: "spanisch", short: "Es", name: "Spanisch-Übersetzer", sub: "Mit Google Übersetzer" },
+    { href: "#/uebersetzer/latein", subject: "latein", short: "La", name: "Latein-Wörterbuch", sub: "Formen und Bedeutungen, wie im Stowasser" },
+  ];
+  function moreMenu() {
+    return '<div class="more"><button type="button" class="more-btn" aria-label="Mehr: Übersetzer" aria-haspopup="true" aria-expanded="false">' +
+      svg("more") + '</button><div class="more-menu" hidden>' +
+      TOOLS.map((t) => {
+        const s = SUBJECTS.find((x) => x.id === t.subject) || {};
+        return '<a class="more-item" href="' + t.href + '"><span class="mono" style="--tint:' + esc(s.color || "") + '" aria-hidden="true">' +
+          t.short + '</span><span class="row-text"><span class="row-title">' + t.name + '</span><span class="row-sub">' + t.sub + "</span></span></a>";
+      }).join("") + "</div></div>";
+  }
+  function closeMore(except) {
+    app.querySelectorAll(".more-btn[aria-expanded=true]").forEach((b) => {
+      if (b === except) return;
+      b.setAttribute("aria-expanded", "false");
+      b.nextElementSibling.hidden = true;
+    });
+  }
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".more-btn");
+    closeMore(btn);
+    if (!btn) return;
+    const open = btn.getAttribute("aria-expanded") !== "true";
+    btn.setAttribute("aria-expanded", String(open));
+    btn.nextElementSibling.hidden = !open;
+    if (open) btn.nextElementSibling.querySelector("a").focus();
+  });
 
   function row(href, lead, title, sub, end) {
     return '<li><a class="row" href="' + href + '">' + lead +
@@ -179,6 +212,8 @@
   document.addEventListener("keydown", (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === "Escape") {
+      const menu = app.querySelector(".more-btn[aria-expanded=true]");
+      if (menu) { closeMore(); menu.focus(); return; }
       const close = app.querySelector(".session [data-up]");
       if (close) { close.click(); return; }
     }
@@ -212,6 +247,7 @@
 
     if (!sid) return showHome();
     if (sid === "ideen") return showIdeas();
+    if (sid === "uebersetzer") return showTranslator(tid, token);
     const subject = SUBJECTS.find((s) => s.id === sid);
     if (!subject) return showNotFound();
     if (!tid) return showSubject(subject);
@@ -295,6 +331,7 @@
       if (st.quizBest && (!best || st.quizBest.score / st.quizBest.total > best.score / best.total)) best = st.quizBest;
     }));
     const date = new Date().toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long" });
+    const shortDate = new Date().toLocaleDateString("de-AT", { weekday: "short", day: "numeric", month: "short" });
 
     const stats =
       '<dl class="stats reveal" style="--i:2">' +
@@ -339,7 +376,7 @@
 
     render('<div class="home">' +
       '<header class="home-top reveal" style="--i:0"><span class="brand"><span class="brand-mark" aria-hidden="true">6a</span>Lernübungen</span>' +
-      '<span class="home-date">' + esc(date) + "</span></header>" +
+      '<span class="home-tools"><span class="home-date"><span class="date-long">' + esc(date) + '</span><span class="date-short">' + esc(shortDate) + "</span></span>" + moreMenu() + "</span></header>" +
       '<h1 class="home-title reveal" style="--i:1">Heute</h1>' +
       '<p class="lede reveal" style="--i:1">Vokabeln, Grammatik und Geschichte für die nächste Prüfung.</p>' +
       stats +
@@ -854,6 +891,33 @@
           status.textContent = "Das hat nicht geklappt. Prüfe deine Internetverbindung und versuch es nochmal.";
           status.className = "idea-status bad";
         });
+    });
+  }
+
+  // ---------- Translators (#/uebersetzer/spanisch | latein) ----------
+  // The code lives in assets/uebersetzer.js and only loads when someone opens it.
+  let translatorLoad = null;
+  function showTranslator(lang, token) {
+    const tool = TOOLS.find((t) => t.href === "#/uebersetzer/" + lang);
+    if (!tool) return showNotFound();
+    if (!translatorLoad) {
+      translatorLoad = new Promise((resolve, reject) => {
+        const el = document.createElement("script");
+        el.src = "assets/uebersetzer.js?v=1";
+        el.onload = () => (window.Uebersetzer ? resolve() : reject(new Error("missing")));
+        el.onerror = () => { el.remove(); reject(new Error("missing")); };
+        document.head.appendChild(el);
+      }).catch((err) => { translatorLoad = null; throw err; });
+    }
+    const page = (body) => render(topBar({ up: "#/", upLabel: "Übersicht", title: tool.name.split("-").pop() }) +
+      '<main class="page"><h1 class="large-title">' + esc(tool.name) + "</h1>" + body + "</main>", tool.name);
+    page('<p class="loading">Lädt …</p>');
+    translatorLoad.then(() => {
+      if (token !== routeToken) return;
+      window.Uebersetzer.show(lang, { app, page, esc, svg, store, isCurrent: () => token === routeToken });
+    }).catch(() => {
+      if (token !== routeToken) return;
+      page(notice("Der Übersetzer konnte nicht geladen werden.", "Prüfe deine Internetverbindung und versuch es nochmal."));
     });
   }
 

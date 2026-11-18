@@ -188,3 +188,15 @@ no permissions and no payment. Progress is saved on the device.
 **Back behaviour.** Every screen has one parent. The browser or phone back
 gesture and the on-screen back button both go up one level, even when a link
 was opened directly (for example, shared with a classmate).
+
+**"…" menu (top right).** On the start screen and in every top bar (not in
+study sessions). It opens a small card with the two translators
+(`assets/uebersetzer.js`, loaded only when opened):
+- **Spanisch-Übersetzer** (`#/uebersetzer/spanisch`): Google Übersetzer in
+  both directions, other meanings for single words, "anhören", and a link to
+  translate.google.com if it fails.
+- **Latein-Wörterbuch** (`#/uebersetzer/latein`): works like the Stowasser,
+  with no sentence translation on purpose. For each word it shows which form
+  it is, the school heading (amō, amāre, amāvī, amātum / bāsium, bāsiī n.),
+  meanings and a form table on request. The data comes from the German
+  Wiktionary, plus the English one for rare forms.
