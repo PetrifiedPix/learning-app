@@ -682,3 +682,139 @@ button { font: inherit; color: inherit; }
   .date-short { display: inline; }
 }
 .home-top { position: relative; z-index: 5; }
+
+/* Menu items are buttons now (they open the tools panel) */
+.more-item { width: 100%; border: 0; background: transparent; font: inherit; cursor: pointer; }
+.tool-mono { background: var(--surface-2); color: var(--text); }
+.tool-mono .ic { width: 20px; height: 20px; }
+
+/* Tools panel: floats over the page so it can be used while studying.
+   Phone: sheet at the bottom (stays above the keyboard via --kb). Desktop: small window, draggable. */
+.tool-panel {
+  position: fixed; z-index: 30;
+  left: 0; right: 0; bottom: var(--kb, 0px);
+  height: min(62vh, 560px); height: min(62dvh, 560px);
+  display: flex; flex-direction: column;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -8px 32px rgba(29, 35, 48, 0.16);
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: tp-in 220ms var(--ease);
+}
+.tool-panel[hidden] { display: none; }
+@keyframes tp-in { from { transform: translateY(24px); opacity: 0; } }
+body.tp-open { padding-bottom: min(62vh, 560px); padding-bottom: min(62dvh, 560px); }
+@media (min-width: 640px) {
+  .tool-panel {
+    left: auto; right: 24px; bottom: 24px; top: auto;
+    width: 380px; height: min(600px, calc(100vh - 48px)); height: min(600px, calc(100dvh - 48px));
+    border-bottom: 1px solid var(--border); border-radius: var(--r-lg);
+    box-shadow: 0 16px 48px rgba(29, 35, 48, 0.2);
+    padding-bottom: 0;
+  }
+  body.tp-open { padding-bottom: 0; }
+  .tp-grip { display: none; }
+}
+@media (pointer: fine) and (min-width: 640px) {
+  .tp-head { cursor: grab; }
+  .tool-panel.dragging { animation: none; user-select: none; }
+  .tool-panel.dragging .tp-head { cursor: grabbing; }
+}
+.tp-head {
+  position: relative; flex: none;
+  display: flex; align-items: center; gap: 4px;
+  padding: 14px 8px 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.tp-grip { position: absolute; top: 5px; left: 50%; width: 36px; height: 4px; margin-left: -18px; border-radius: 2px; background: var(--border-strong); }
+.tp-tabs { flex: 1; min-width: 0; }
+.tp-tabs button { min-height: 34px; font-size: var(--fs-xs); }
+.tp-btn {
+  flex: none; display: grid; place-items: center; width: 36px; height: 36px;
+  border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text-2); cursor: pointer;
+}
+.tp-btn:hover { background: var(--surface-2); color: var(--text); }
+.tp-btn .ic { width: 20px; height: 20px; }
+.tp-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s-4); }
+.tp-pill {
+  position: fixed; z-index: 30; right: var(--gutter); bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  min-height: 44px; padding: 0 var(--s-4) 0 var(--s-3);
+  border: 0; border-radius: var(--r-pill);
+  background: var(--primary); color: var(--on-primary);
+  font: 600 var(--fs-sm)/1 var(--font-sans); cursor: pointer;
+  box-shadow: 0 6px 20px rgba(29, 35, 48, 0.22);
+}
+.tp-pill[hidden] { display: none; }
+.tp-pill .ic { width: 18px; height: 18px; }
+
+/* Tools inside the panel are a bit more compact */
+.tp-body .tr-form { gap: var(--s-3); }
+.tp-body .tr-result { margin-top: var(--s-4); }
+.tp-body .tr-buttons .btn { min-height: 44px; }
+.tp-body .lex-q { font-size: var(--fs-lg); line-height: var(--lh-lg); }
+.tp-body .lex-entry { padding: var(--s-3) var(--s-4); }
+.tp-body .tr-card { padding: var(--s-4); }
+.tr-hint { margin: 0 0 var(--s-3); font-size: var(--fs-sm); line-height: var(--lh-sm); color: var(--text-2); }
+
+/* Calculator (assets/rechner.js) */
+.calc { display: grid; gap: var(--s-3); }
+.calc-screen {
+  display: grid; gap: 2px; padding: var(--s-3) var(--s-4);
+  background: var(--surface-2); border-radius: var(--r-md); text-align: right;
+}
+.calc-input {
+  width: 100%; padding: 0; border: 0; outline: none; background: transparent;
+  font: 600 26px/1.25 var(--font-sans); color: var(--text); text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.calc-input::placeholder { color: var(--text-2); }
+.calc-result { min-height: 20px; font-size: var(--fs-sm); line-height: 20px; color: var(--text-2); overflow-wrap: anywhere; }
+.calc-result.bad { color: var(--error); }
+.calc-modes { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); }
+.calc-angle { flex: none; width: 136px; }
+.calc-angle button { min-height: 32px; font-size: var(--fs-xs); }
+.calc-2nd {
+  min-height: 32px; padding: 0 var(--s-4); border: 1px solid var(--border-strong); border-radius: var(--r-pill);
+  background: var(--surface); color: var(--text); font: 600 var(--fs-xs)/1 var(--font-sans); cursor: pointer;
+}
+.calc-2nd[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); border-color: transparent; }
+.calc-keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.ck {
+  min-height: 44px; padding: 0 2px;
+  border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); color: var(--text);
+  font: 500 18px/1 var(--font-sans); cursor: pointer;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+  transition: background 100ms, transform 80ms;
+}
+.ck:hover { border-color: var(--border-strong); }
+.ck:active { background: var(--surface-2); transform: scale(0.96); }
+.ck-fn { background: var(--surface-2); font-size: var(--fs-sm); }
+.ck-op { background: var(--accent-soft); color: var(--on-accent-soft); border-color: transparent; font-size: 21px; }
+.ck-warn { color: var(--error); font-size: var(--fs-sm); font-weight: 600; }
+.ck-eq { background: var(--primary); color: var(--on-primary); border-color: transparent; font-size: 21px; font-weight: 600; }
+.ck-eq:active { background: var(--primary-hover); }
+@media (max-height: 720px) { .ck { min-height: 38px; } }
+.calc-history ul { list-style: none; margin: var(--s-1) 0 0; padding: 0; }
+.calc-hist-head { display: flex; align-items: center; justify-content: space-between; color: var(--text-2); margin-top: var(--s-2); }
+.calc-hist-clear { border: 0; background: transparent; color: var(--text-2); font: inherit; font-size: var(--fs-xs); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.calc-history li button {
+  width: 100%; display: flex; justify-content: space-between; gap: var(--s-3);
+  padding: var(--s-2) 0; border: 0; border-top: 1px solid var(--border); background: transparent;
+  font: inherit; font-size: var(--fs-sm); text-align: left; cursor: pointer; color: var(--text);
+}
+.calc-h-expr { color: var(--text-2); overflow-wrap: anywhere; }
+.calc-h-res { font-weight: 600; white-space: nowrap; }
+/* Fit the whole keypad in the phone sheet */
+.calc { gap: var(--s-2); }
+.calc-screen { padding: var(--s-2) var(--s-4); }
+.ck { min-height: 40px; }
+@media (max-height: 720px) { .ck { min-height: 34px; } .calc-input { font-size: 22px; } }
+/* Desktop: a visible grip strip at the top to drag the window by */
+@media (min-width: 640px) {
+  .tp-grip { display: block; }
+  .tp-head { padding-top: 20px; }
+  .tp-grip { top: 7px; }
+}

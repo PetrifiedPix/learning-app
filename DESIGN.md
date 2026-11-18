@@ -189,14 +189,24 @@ no permissions and no payment. Progress is saved on the device.
 gesture and the on-screen back button both go up one level, even when a link
 was opened directly (for example, shared with a classmate).
 
-**"…" menu (top right).** On the start screen and in every top bar (not in
-study sessions). It opens a small card with the two translators
-(`assets/uebersetzer.js`, loaded only when opened):
-- **Spanisch-Übersetzer** (`#/uebersetzer/spanisch`): Google Übersetzer in
-  both directions, other meanings for single words, "anhören", and a link to
+**"…" menu (top right) and the tools panel.** The menu is on the start
+screen and in every top bar (not in study sessions). Each item opens the
+**tools panel**: a small window that floats over the page, so you can use it
+while studying. It stays open with its results when you move between screens.
+On phones it's a sheet at the bottom (about 60 % high, it stays above the
+keyboard). On desktop it's a 380 px window you can drag by the grip at the top,
+and it remembers where you put it. "–" shrinks it to a small button, "×"
+closes it. Tabs:
+- **Spanisch** (`assets/uebersetzer.js`): Google Übersetzer in both
+  directions, other meanings for single words, "anhören", and a link to
   translate.google.com if it fails.
-- **Latein-Wörterbuch** (`#/uebersetzer/latein`): works like the Stowasser,
-  with no sentence translation on purpose. For each word it shows which form
-  it is, the school heading (amō, amāre, amāvī, amātum / bāsium, bāsiī n.),
-  meanings and a form table on request. The data comes from the German
-  Wiktionary, plus the English one for rare forms.
+- **Latein**: works like the Stowasser, with no sentence translation on
+  purpose. It shows which form a word is, the school heading (amō, amāre,
+  amāvī, amātum / bāsium, bāsiī n.), meanings and a form table on request.
+  The data comes from the German Wiktionary, plus the English one for rare
+  forms.
+- **Rechner** (`assets/rechner.js`): calculator for maths. You can type or
+  tap. It has a decimal comma, DEG/RAD, sin/cos/tan and their inverses (2nd),
+  log, ln, roots, powers, n!, π, e, Ans and a history. It does "Punkt vor
+  Strich" and multiplies without a sign (2π). No eval.
+Each tool's script loads only the first time it's opened.

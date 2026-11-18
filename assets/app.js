@@ -2,7 +2,7 @@
   Lern-App. Plain JavaScript with no build step.
   Screens: Home (#/) → Subject (#/spanisch) → Topic (#/spanisch/a1-u1)
   → Session (#/spanisch/a1-u1/karten | quiz | fehler).
-  Also: #/ideen (suggestion form) and #/uebersetzer/spanisch | latein (the "…" menu).
+  Also: #/ideen (suggestion form). The "…" menu opens the tools panel (translators, calculator).
   Content comes from subjects/index.js and one file per topic.
 */
 (function () {
@@ -89,6 +89,8 @@
     plus: '<path d="M12 5v14M5 12h14"/>',
     book: '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19"/>',
     course: '<path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.2V16c0 1.2 2.2 3 5 3s5-1.8 5-3v-4.8"/>',
+    calc: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h.01M15.5 18h.01"/>',
+    minimize: '<path d="M6 12h12"/>',
     more: '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
   };
   function svg(name, cls) {
@@ -112,18 +114,24 @@
       '<div class="bar-end">' + (o.end || "") + moreMenu() + "</div></div></header>";
   }
 
-  // The "…" button in the top right: opens the translators (assets/uebersetzer.js).
+  // The "…" button in the top right opens a small tools panel (translators, calculator)
+  // that floats over the page, so it can be used while studying. Each tool's code
+  // loads only when it's first opened.
   const TOOLS = [
-    { href: "#/uebersetzer/spanisch", subject: "spanisch", short: "Es", name: "Spanisch-Übersetzer", sub: "Mit Google Übersetzer" },
-    { href: "#/uebersetzer/latein", subject: "latein", short: "La", name: "Latein-Wörterbuch", sub: "Formen und Bedeutungen, wie im Stowasser" },
+    { id: "spanisch", tab: "Spanisch", short: "Es", subject: "spanisch", name: "Spanisch-Übersetzer", sub: "Mit Google Übersetzer", script: "assets/uebersetzer.js?v=2" },
+    { id: "latein", tab: "Latein", short: "La", subject: "latein", name: "Latein-Wörterbuch", sub: "Formen und Bedeutungen, wie im Stowasser", script: "assets/uebersetzer.js?v=2" },
+    { id: "rechner", tab: "Rechner", icon: "calc", name: "Taschenrechner", sub: "Für Mathe: Klammern, Potenzen, sin, log", script: "assets/rechner.js?v=1" },
   ];
   function moreMenu() {
-    return '<div class="more"><button type="button" class="more-btn" aria-label="Mehr: Übersetzer" aria-haspopup="true" aria-expanded="false">' +
+    return '<div class="more"><button type="button" class="more-btn" aria-label="Mehr: Übersetzer und Rechner" aria-haspopup="true" aria-expanded="false">' +
       svg("more") + '</button><div class="more-menu" hidden>' +
       TOOLS.map((t) => {
         const s = SUBJECTS.find((x) => x.id === t.subject) || {};
-        return '<a class="more-item" href="' + t.href + '"><span class="mono" style="--tint:' + esc(s.color || "") + '" aria-hidden="true">' +
-          t.short + '</span><span class="row-text"><span class="row-title">' + t.name + '</span><span class="row-sub">' + t.sub + "</span></span></a>";
+        const lead = t.icon
+          ? '<span class="mono tool-mono" aria-hidden="true">' + svg(t.icon) + "</span>"
+          : '<span class="mono" style="--tint:' + esc(s.color || "") + '" aria-hidden="true">' + t.short + "</span>";
+        return '<button type="button" class="more-item" data-tool="' + t.id + '">' + lead +
+          '<span class="row-text"><span class="row-title">' + t.name + '</span><span class="row-sub">' + t.sub + "</span></span></button>";
       }).join("") + "</div></div>";
   }
   function closeMore(except) {
@@ -134,13 +142,15 @@
     });
   }
   document.addEventListener("click", (e) => {
+    const item = e.target.closest(".more-item");
+    if (item) { closeMore(); openTools(item.dataset.tool); return; }
     const btn = e.target.closest(".more-btn");
     closeMore(btn);
     if (!btn) return;
     const open = btn.getAttribute("aria-expanded") !== "true";
     btn.setAttribute("aria-expanded", String(open));
     btn.nextElementSibling.hidden = !open;
-    if (open) btn.nextElementSibling.querySelector("a").focus();
+    if (open) btn.nextElementSibling.querySelector("button").focus();
   });
 
   function row(href, lead, title, sub, end) {
@@ -211,6 +221,10 @@
 
   document.addEventListener("keydown", (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.closest && e.target.closest(".tool-panel")) {
+      if (e.key === "Escape") toolPanel.minimize();
+      return;
+    }
     if (e.key === "Escape") {
       const menu = app.querySelector(".more-btn[aria-expanded=true]");
       if (menu) { closeMore(); menu.focus(); return; }
@@ -247,7 +261,7 @@
 
     if (!sid) return showHome();
     if (sid === "ideen") return showIdeas();
-    if (sid === "uebersetzer") return showTranslator(tid, token);
+    if (sid === "uebersetzer") { replace("#/"); openTools(tid); return; } // old links
     const subject = SUBJECTS.find((s) => s.id === sid);
     if (!subject) return showNotFound();
     if (!tid) return showSubject(subject);
@@ -894,31 +908,149 @@
     });
   }
 
-  // ---------- Translators (#/uebersetzer/spanisch | latein) ----------
-  // The code lives in assets/uebersetzer.js and only loads when someone opens it.
-  let translatorLoad = null;
-  function showTranslator(lang, token) {
-    const tool = TOOLS.find((t) => t.href === "#/uebersetzer/" + lang);
-    if (!tool) return showNotFound();
-    if (!translatorLoad) {
-      translatorLoad = new Promise((resolve, reject) => {
+  // ---------- Tools panel (translators, calculator) ----------
+  // Lives outside #app, so it stays open (with its results) while you move between screens.
+  // Phone: a sheet at the bottom. Desktop: a small window you can drag by its top.
+  const scripts = {};
+  function loadScript(src) {
+    if (!scripts[src]) {
+      scripts[src] = new Promise((resolve, reject) => {
         const el = document.createElement("script");
-        el.src = "assets/uebersetzer.js?v=1";
-        el.onload = () => (window.Uebersetzer ? resolve() : reject(new Error("missing")));
+        el.src = src;
+        el.onload = resolve;
         el.onerror = () => { el.remove(); reject(new Error("missing")); };
         document.head.appendChild(el);
-      }).catch((err) => { translatorLoad = null; throw err; });
+      }).catch((err) => { delete scripts[src]; throw err; });
     }
-    const page = (body) => render(topBar({ up: "#/", upLabel: "Übersicht", title: tool.name.split("-").pop() }) +
-      '<main class="page"><h1 class="large-title">' + esc(tool.name) + "</h1>" + body + "</main>", tool.name);
-    page('<p class="loading">Lädt …</p>');
-    translatorLoad.then(() => {
-      if (token !== routeToken) return;
-      window.Uebersetzer.show(lang, { app, page, esc, svg, store, isCurrent: () => token === routeToken });
-    }).catch(() => {
-      if (token !== routeToken) return;
-      page(notice("Der Übersetzer konnte nicht geladen werden.", "Prüfe deine Internetverbindung und versuch es nochmal."));
+    return scripts[src];
+  }
+
+  const fine = window.matchMedia && matchMedia("(pointer: fine)").matches;
+  let toolPanel = null;
+
+  function openTools(id) {
+    if (!toolPanel) toolPanel = makeToolPanel();
+    toolPanel.open(TOOLS.some((t) => t.id === id) ? id : store.get("tools").tab || TOOLS[0].id);
+  }
+
+  function makeToolPanel() {
+    const el = document.createElement("section");
+    el.className = "tool-panel";
+    el.setAttribute("aria-label", "Werkzeuge");
+    el.hidden = true;
+    el.innerHTML = '<div class="tp-head"><span class="tp-grip" aria-hidden="true"></span>' +
+      '<div class="seg tp-tabs" role="tablist">' +
+      TOOLS.map((t) => '<button type="button" role="tab" data-tab="' + t.id + '">' + t.tab + "</button>").join("") + "</div>" +
+      '<button type="button" class="tp-btn" data-act="min" aria-label="Verkleinern">' + svg("minimize") + "</button>" +
+      '<button type="button" class="tp-btn" data-act="close" aria-label="Schließen">' + svg("close") + "</button></div>" +
+      '<div class="tp-body">' + TOOLS.map((t) => '<div class="tp-pane" role="tabpanel" data-pane="' + t.id + '" hidden></div>').join("") + "</div>";
+    const pill = document.createElement("button");
+    pill.type = "button";
+    pill.className = "tp-pill";
+    pill.hidden = true;
+    document.body.append(el, pill);
+
+    const helpers = { esc, svg, store, fine };
+    const mounted = {};
+    let current = null;
+
+    function show(id) {
+      current = id;
+      store.update("tools", (v) => { v.tab = id; });
+      el.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === id)));
+      el.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tab === id)));
+      el.querySelectorAll("[data-pane]").forEach((p) => { p.hidden = p.dataset.pane !== id; });
+      const pane = el.querySelector('[data-pane="' + id + '"]');
+      const tool = TOOLS.find((t) => t.id === id);
+      pill.innerHTML = svg("more") + "<span>" + esc(tool.name) + "</span>";
+      if (mounted[id]) return;
+      mounted[id] = true;
+      pane.innerHTML = '<p class="loading">Lädt …</p>';
+      loadScript(tool.script).then(() => {
+        if (id === "rechner") window.Rechner.mount(pane, helpers);
+        else window.Uebersetzer.mount(id, pane, helpers);
+      }).catch(() => {
+        mounted[id] = false;
+        pane.innerHTML = notice("Konnte nicht geladen werden.", "Prüfe deine Internetverbindung und versuch es nochmal.");
+      });
+    }
+
+    function setOpen(open, minimized) {
+      el.hidden = !open || minimized;
+      pill.hidden = !open || !minimized;
+      document.body.classList.toggle("tp-open", open && !minimized);
+      fitKeyboard();
+    }
+
+    el.addEventListener("click", (e) => {
+      const tab = e.target.closest("[data-tab]");
+      if (tab) return show(tab.dataset.tab);
+      const act = e.target.closest("[data-act]");
+      if (act && act.dataset.act === "min") api.minimize();
+      if (act && act.dataset.act === "close") { setOpen(false); }
     });
+    pill.addEventListener("click", () => { setOpen(true, false); });
+
+    // Desktop: drag the window by its top bar; the spot is remembered.
+    function place(x, y) {
+      const w = el.offsetWidth, hgt = el.offsetHeight;
+      x = Math.max(8, Math.min(innerWidth - w - 8, x));
+      y = Math.max(8, Math.min(innerHeight - hgt - 8, y));
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+      el.style.right = el.style.bottom = "auto";
+      return [x, y];
+    }
+    const head = el.querySelector(".tp-head");
+    head.addEventListener("pointerdown", (e) => {
+      if (!fine || e.button !== 0 || e.target.closest("button")) return;
+      const r = el.getBoundingClientRect();
+      const dx = e.clientX - r.left, dy = e.clientY - r.top;
+      head.setPointerCapture(e.pointerId);
+      el.classList.add("dragging");
+      const move = (ev) => place(ev.clientX - dx, ev.clientY - dy);
+      const up = () => {
+        el.classList.remove("dragging");
+        head.removeEventListener("pointermove", move);
+        head.removeEventListener("pointerup", up);
+        const b = el.getBoundingClientRect();
+        store.update("tools", (v) => { v.pos = [b.left, b.top]; });
+      };
+      head.addEventListener("pointermove", move);
+      head.addEventListener("pointerup", up);
+    });
+    function restorePlace() {
+      const pos = store.get("tools").pos;
+      if (fine && pos && innerWidth >= 640) place(pos[0], pos[1]);
+      else el.style.left = el.style.top = el.style.right = el.style.bottom = "";
+    }
+    window.addEventListener("resize", () => { if (!el.hidden) restorePlace(); });
+
+    // Phone: keep the sheet above the on-screen keyboard.
+    function fitKeyboard() {
+      const vv = window.visualViewport;
+      const gap = vv ? Math.max(0, innerHeight - vv.height - vv.offsetTop) : 0;
+      el.style.setProperty("--kb", gap + "px");
+    }
+    if (window.visualViewport) {
+      visualViewport.addEventListener("resize", fitKeyboard);
+      visualViewport.addEventListener("scroll", fitKeyboard);
+    }
+
+    const api = {
+      open(id) {
+        setOpen(true, false);
+        restorePlace();
+        show(id);
+      },
+      minimize() {
+        if (el.hidden) return;
+        if (el.contains(document.activeElement)) document.activeElement.blur();
+        setOpen(true, true);
+        pill.focus();
+      },
+    };
+    return api;
   }
 
   function showNotFound(subject) {

@@ -1,6 +1,6 @@
 /*
-  Übersetzer: opened from the "…" menu (#/uebersetzer/spanisch | latein).
-  Loaded by assets/app.js only when needed, which calls Uebersetzer.show(lang, h).
+  Übersetzer: shown in the small tools panel that the "…" menu opens.
+  Loaded by assets/app.js only when needed, which calls Uebersetzer.mount(lang, root, h).
 
   - Spanisch: Google Übersetzer (the free endpoint its own website uses), plus
     other meanings of single words. Falls back to a link to translate.google.com.
@@ -12,13 +12,13 @@
 (function () {
   "use strict";
 
-  let h; // helpers from app.js: app, page, esc, svg, store, isCurrent
+  let h; // helpers from app.js: esc, svg, store, fine (true with a mouse: then inputs get focus)
 
   window.Uebersetzer = {
-    show(lang, helpers) {
+    mount(lang, root, helpers) {
       h = helpers;
-      if (lang === "latein") showLatin();
-      else showSpanish();
+      if (lang === "latein") showLatin(root);
+      else showSpanish(root);
     },
   };
 
@@ -40,11 +40,10 @@
     abbreviation: "Abkürzung", phrase: "Wendung", prefix: "Vorsilbe", suffix: "Nachsilbe", particle: "Partikel",
   };
 
-  function showSpanish() {
+  function showSpanish(root) {
     const saved = h.store.get("uebersetzer");
     let dir = saved.dir === "de" ? "de" : "es"; // source language
-    h.page(
-      '<p class="lede">Wörter und Sätze zwischen Spanisch und Deutsch übersetzen, mit Google Übersetzer.</p>' +
+    root.innerHTML = (
       '<form class="tr-form" novalidate>' +
       '<div class="seg" role="group" aria-label="Richtung">' +
       '<button type="button" data-dir="es">Spanisch → Deutsch</button>' +
@@ -54,9 +53,9 @@
       '<div class="tr-buttons"><button type="submit" class="btn btn-primary">Übersetzen</button></div></form>' +
       '<div class="tr-result" aria-live="polite"></div>');
 
-    const form = h.app.querySelector(".tr-form");
+    const form = root.querySelector(".tr-form");
     const box = form.elements.namedItem("q");
-    const out = h.app.querySelector(".tr-result");
+    const out = root.querySelector(".tr-result");
 
     function setDir(d) {
       dir = d;
@@ -76,7 +75,7 @@
     box.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); translate(); }
     });
-    box.focus();
+    if (h.fine) box.focus();
 
     let ask = 0;
     function translate() {
@@ -88,7 +87,7 @@
       out.innerHTML = '<p class="loading">Übersetze …</p>';
       getJSON("https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&dt=bd&sl=" + from + "&tl=" + to + "&q=" + encodeURIComponent(q))
         .then((d) => {
-          if (mine !== ask || !h.isCurrent()) return;
+          if (mine !== ask || !root.isConnected) return;
           const text = (d[0] || []).map((seg) => seg[0] || "").join("").trim();
           if (!text) throw new Error("empty");
           const groups = (d[1] || []).map((g) => {
@@ -106,7 +105,7 @@
           if (say) say.addEventListener("click", () => speak(say.dataset.say));
         })
         .catch(() => {
-          if (mine !== ask || !h.isCurrent()) return;
+          if (mine !== ask || !root.isConnected) return;
           out.innerHTML = '<div class="notice"><strong>Das hat gerade nicht geklappt.</strong>' +
             "Prüfe deine Internetverbindung, oder öffne den Text direkt bei Google.</div>" + extLink(gUrl, "In Google Übersetzer öffnen");
         });
@@ -126,10 +125,10 @@
   const DE_API = "https://de.wiktionary.org/w/api.php?format=json&formatversion=2&origin=*&";
   const ENCLITICS = { que: "-que = „und“ (angehängt)", ne: "-ne = Fragepartikel (angehängt)", ve: "-ve = „oder“ (angehängt)" };
 
-  function showLatin() {
-    h.page(
-      '<p class="lede">Wie im Stowasser: Gib ein lateinisches Wort ein, auch eine Form wie <i>amat</i> oder <i>puellam</i>. ' +
-      "Du siehst, welche Form es ist, die Grundform mit ihren Formen und mögliche Bedeutungen. Übersetzen musst du selbst.</p>" +
+  function showLatin(root) {
+    root.innerHTML = (
+      '<p class="tr-hint">Wie im Stowasser: Gib ein Wort ein, auch eine Form wie <i>amat</i>. ' +
+      "Du siehst, welche Form es ist, die Grundform und mögliche Bedeutungen. Übersetzen musst du selbst.</p>" +
       '<form class="tr-form lex-form" novalidate>' +
       '<label class="field"><span class="field-label">Lateinisches Wort</span>' +
       '<input name="q" type="search" placeholder="z. B. basia, fecerimus, miser" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" enterkeyhint="search"></label>' +
@@ -137,9 +136,9 @@
       '<div class="lex-recent"></div></form>' +
       '<div class="tr-result" aria-live="polite"></div>');
 
-    const form = h.app.querySelector(".lex-form");
+    const form = root.querySelector(".lex-form");
     const input = form.elements.namedItem("q");
-    const out = h.app.querySelector(".tr-result");
+    const out = root.querySelector(".tr-result");
     const recentBox = form.querySelector(".lex-recent");
 
     function showRecent() {
@@ -156,7 +155,7 @@
     });
     form.addEventListener("submit", (e) => { e.preventDefault(); lookupAll(); });
     out.addEventListener("click", onResultClick);
-    input.focus();
+    if (h.fine) input.focus();
 
     let ask = 0;
     function lookupAll() {
@@ -173,9 +172,9 @@
       const slots = out.querySelectorAll(".lex-word");
       words.forEach((w, i) => {
         lookup(w).then((res) => {
-          if (mine === ask && h.isCurrent()) slots[i].innerHTML = renderWord(w, res);
+          if (mine === ask && root.isConnected) slots[i].innerHTML = renderWord(w, res);
         }).catch(() => {
-          if (mine === ask && h.isCurrent()) {
+          if (mine === ask && root.isConnected) {
             slots[i].innerHTML = '<h2 class="lex-q">' + h.esc(w) + "</h2>" +
               '<div class="notice"><strong>Keine Verbindung zum Wörterbuch.</strong>Prüfe dein Internet und versuch es nochmal.</div>' + moreLinks(w);
           }
