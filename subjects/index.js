@@ -53,6 +53,7 @@ window.SUBJECTS = [
     ],
     topics: [
       { id: "trainer", group: "Trainer", name: "Geschichte-Trainer", blurb: "Prüfungsfragen, Zuordnen, Zeitleiste und Lückentexte", page: "subjects/geschichte/pages/geschichte-trainer.html" },
+      { id: "doomscrollen", group: "Trainer", name: "Geschichte doomscrollen", blurb: "5 kurze Videos auf Instagram, genau zu unserem Stoff", page: "subjects/geschichte/pages/doomscrollen.html" },
 
       { id: "humanismus", short: "1", group: "Stoffgebiete · Frühe Neuzeit", name: "Humanismus und Renaissance", blurb: "ZB S. 112–115", file: "subjects/geschichte/humanismus.js" },
       { id: "fruehkapitalismus", short: "2", group: "Stoffgebiete · Frühe Neuzeit", name: "Frühkapitalismus", blurb: "ZB S. 118–119", file: "subjects/geschichte/fruehkapitalismus.js" },

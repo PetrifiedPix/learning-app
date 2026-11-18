@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Geschichte doomscrollen</title>
+<style>
+:root {
+  --bg: #F7F8FA; --surface: #FFFFFF; --surface-2: #F0F2F5;
+  --border: #E4E7EC; --border-strong: #D0D5DD;
+  --text: #1D2330; --text-2: #667085;
+  --primary: #2E3646; --on-primary: #FFFFFF;
+  --accent: #7BA696; --accent-soft: #EAF2EE; --on-accent-soft: #2F5446;
+  --tint: #6F8FB3; --tint-soft: #E9EFF6;
+  --success: #3E8E66; --error: #C8564B;
+  --success-bg: rgba(62,142,102,.10); --error-bg: rgba(200,86,75,.08);
+  --shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.06);
+  --ease: cubic-bezier(.2,.7,.2,1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111317; --surface: #181B21; --surface-2: #20242B;
+    --border: #2A2F37; --border-strong: #3A404A;
+    --text: #ECEEF2; --text-2: #9AA1AD;
+    --primary: #A9CDBD; --on-primary: #12201A;
+    --accent: #8DB8A6; --accent-soft: #1C2A25; --on-accent-soft: #CFE5DA;
+    --tint: #8FA9C8; --tint-soft: #1E2733;
+    --success: #6CC497; --error: #E8877D;
+    --success-bg: rgba(108,196,151,.14); --error-bg: rgba(232,135,125,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111317; --surface: #181B21; --surface-2: #20242B;
+  --border: #2A2F37; --border-strong: #3A404A;
+  --text: #ECEEF2; --text-2: #9AA1AD;
+  --primary: #A9CDBD; --on-primary: #12201A;
+  --accent: #8DB8A6; --accent-soft: #1C2A25; --on-accent-soft: #CFE5DA;
+  --tint: #8FA9C8; --tint-soft: #1E2733;
+  --success: #6CC497; --error: #E8877D;
+  --success-bg: rgba(108,196,151,.14); --error-bg: rgba(232,135,125,.14);
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 17px/26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+main {
+  max-width: 560px; margin: 0 auto;
+  padding: 24px 16px calc(32px + env(safe-area-inset-bottom, 0px));
+}
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: var(--shadow); padding: 24px 20px;
+}
+.kicker { margin: 0 0 6px; font-size: 13px; line-height: 18px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--tint); }
+h1 { margin: 0 0 10px; font-size: 24px; line-height: 30px; letter-spacing: -0.02em; }
+p { margin: 0 0 20px; color: var(--text-2); }
+.handle { color: var(--text); font-weight: 600; }
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 0 18px; border-radius: 12px;
+  background: var(--primary); color: var(--on-primary);
+  font: inherit; font-weight: 600; text-decoration: none;
+  transition: transform .15s var(--ease), opacity .15s var(--ease);
+}
+.btn:hover { opacity: .92; }
+.btn:active { transform: scale(.98); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.note { margin: 14px 0 0; font-size: 14px; line-height: 20px; color: var(--text-2); text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <p class="kicker">Geschichte · Instagram</p>
+    <h1>Geschichte doomscrollen</h1>
+    <p>Die neuesten 5 Videos auf diesem Kanal sind genau zu unserem Geschichte-Stoff. Kanal: <span class="handle">@facctframez</span></p>
+    <a class="btn" href="https://www.instagram.com/facctframez/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      Kanal auf Instagram öffnen
+    </a>
+    <p class="note">Öffnet sich in einem neuen Tab oder in der Instagram-App.</p>
+  </div>
+</main>
+</body>
+</html>
