@@ -27,10 +27,25 @@ button { font: inherit; color: inherit; }
   display: grid; place-items: center; overflow: hidden;
   background: radial-gradient(120% 80% at 50% 30%, #1E2A1D 0%, var(--bg) 70%);
 }
-.slide video {
-  width: 100%; height: 100%; object-fit: contain; background: transparent; display: block;
+/* The video sits in a phone-shaped column; on a laptop the space beside it shows soft colour from the video */
+.stage {
+  position: relative; z-index: 1; height: 100%; width: min(100vw, calc(100dvh * 9 / 16));
+  overflow: hidden; background: #000;
 }
-@media (max-aspect-ratio: 10/16) { .slide video { object-fit: cover; } }
+.stage video {
+  width: 100%; height: 100%; object-fit: cover; background: transparent; display: block;
+}
+.amb { position: absolute; top: 0; bottom: 0; width: 50%; transition: background-color 1.2s linear; background-color: #1E2A1D; }
+.amb.l { left: 0; -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.95) 85%); mask-image: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.95) 85%); }
+.amb.r { right: 0; -webkit-mask-image: linear-gradient(270deg, rgba(0,0,0,.55), rgba(0,0,0,.95) 85%); mask-image: linear-gradient(270deg, rgba(0,0,0,.55), rgba(0,0,0,.95) 85%); }
+.slide::after {
+  /* Darken towards the outer edges so the column stays the focus */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,.55));
+}
+@media (min-aspect-ratio: 10/16) {
+  .stage { box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 30px 80px rgba(0,0,0,.45); }
+}
 
 /* Placeholder shown until the video has a frame */
 .ph {
@@ -81,7 +96,8 @@ button { font: inherit; color: inherit; }
 
 /* Top bar: counter */
 .topbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center;
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: min(100vw, calc(100dvh * 9 / 16));
+  z-index: 5; display: flex; justify-content: space-between; align-items: center;
   padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 12px; pointer-events: none;
   background: linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,0));
 }
@@ -177,6 +193,7 @@ button { font: inherit; color: inherit; }
     s.className = "slide";
     s.dataset.i = n;
     s.innerHTML =
+      '<div class="amb l"></div><div class="amb r"></div><div class="stage">' +
       '<video playsinline preload="none" src="' + v.src + '#t=0.1" aria-label="' + v.title + '"></video>' +
       '<div class="ph"><span>' + ICON.play + "</span></div>" +
       '<div class="flash">' + ICON.pause + "</div>" +
@@ -185,7 +202,7 @@ button { font: inherit; color: inherit; }
         '<button type="button" class="like' + (state.likes[n] ? " liked" : "") + '" aria-pressed="' + !!state.likes[n] + '" aria-label="Gefällt mir"><span class="ic">' + ICON.heart + "</span><span>Merken</span></button>" +
         '<button type="button" class="snd" aria-label="Ton an oder aus"><span class="ic">' + ICON.sound + "</span><span>Ton</span></button>" +
       "</div>" +
-      '<div class="prog"><i></i></div>';
+      '<div class="prog"><i></i></div></div>';
     feed.appendChild(s);
     var d = document.createElement("i"); dots.appendChild(d);
   });
@@ -199,9 +216,31 @@ button { font: inherit; color: inherit; }
   var slides = [].slice.call(feed.querySelectorAll(".slide[data-i]"));
   var videos = slides.map(function (s) { return s.querySelector("video"); });
 
+  // Side colours: read the left and right edge of the current frame from a tiny canvas
+  var cv = document.createElement("canvas"); cv.width = 6; cv.height = 10;
+  var cx = cv.getContext("2d", { willReadFrequently: true });
+  function edge(data, x) {
+    var r = 0, g = 0, b = 0;
+    for (var y = 0; y < cv.height; y++) { var k = (y * cv.width + x) * 4; r += data[k]; g += data[k + 1]; b += data[k + 2]; }
+    // Darker and calmer than the frame itself
+    return "rgb(" + Math.round(r / cv.height * .55) + "," + Math.round(g / cv.height * .55) + "," + Math.round(b / cv.height * .55) + ")";
+  }
+  function tint(n) {
+    var v = videos[n];
+    if (!v || v.readyState < 2 || window.innerWidth / window.innerHeight < 10 / 16) return;
+    try {
+      cx.drawImage(v, 0, 0, cv.width, cv.height);
+      var d = cx.getImageData(0, 0, cv.width, cv.height).data;
+      slides[n].querySelector(".amb.l").style.backgroundColor = edge(d, 0);
+      slides[n].querySelector(".amb.r").style.backgroundColor = edge(d, cv.width - 1);
+    } catch (e) {}
+  }
+  setInterval(function () { if (current >= 0 && !videos[current].paused) tint(current); }, 1000);
+
   videos.forEach(function (v, n) {
     var s = slides[n], bar = s.querySelector(".prog i");
-    v.addEventListener("loadeddata", function () { s.classList.add("ready"); s.classList.remove("loading"); });
+    v.addEventListener("loadeddata", function () { s.classList.add("ready"); s.classList.remove("loading"); tint(n); });
+    v.addEventListener("seeked", function () { tint(n); });
     v.addEventListener("waiting", function () { s.classList.add("loading"); });
     v.addEventListener("playing", function () { s.classList.remove("loading", "paused"); s.classList.add("ready"); });
     v.addEventListener("timeupdate", function () { if (v.duration) bar.style.width = (100 * v.currentTime / v.duration) + "%"; });
