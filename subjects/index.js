@@ -66,6 +66,25 @@ window.SUBJECTS = [
     ],
   },
   {
+    id: "biologie",
+    name: "Biologie",
+    short: "Bi",
+    color: "#7E9F7A",
+    blurb: "Neurobiologie: Nervenzelle, Erregung, Synapse und Auge",
+    links: [
+      { kind: "kurs", name: "Moodle-Kurs Biologie 6A", sub: "eduvidual, SJ 26/27", url: "https://www.eduvidual.at/course/view.php?id=228297" },
+    ],
+    topics: [
+      { id: "trainer", group: "Trainer", name: "Biologie-Trainer", blurb: "Prüfungsfragen, Zuordnen, Abläufe und Lückentexte", page: "subjects/biologie/pages/biologie-trainer.html" },
+      { id: "doomscrollen", group: "Trainer", name: "Biologie doomscrollen", blurb: "5 kurze Videos zum Teststoff, zum Durchwischen", page: "subjects/biologie/pages/doomscrollen.html" },
+
+      { id: "nervenzelle", short: "1", group: "Neurobiologie · Test 25. 11.", name: "Reiz und Nervenzelle", blurb: "Reiz-Reaktions-Kette, Neuron, Nerven", file: "subjects/biologie/nervenzelle.js" },
+      { id: "erregung", short: "2", group: "Neurobiologie · Test 25. 11.", name: "Ruhe- und Aktionspotenzial", blurb: "Ionen, Pumpe, Ablauf, saltatorisch", file: "subjects/biologie/erregung.js" },
+      { id: "synapse", short: "3", group: "Neurobiologie · Test 25. 11.", name: "Synapse, Gifte und MS", blurb: "Transmitter, Krampf oder Lähmung, Multiple Sklerose", file: "subjects/biologie/synapse.js" },
+      { id: "auge", short: "4", group: "Neurobiologie · Test 25. 11.", name: "Auge und Farbsehen", blurb: "Aufbau, Netzhaut, Stäbchen und Zapfen", file: "subjects/biologie/auge.js" },
+    ],
+  },
+  {
     id: "latein",
     name: "Latein",
     short: "La",

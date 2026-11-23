@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biologie doomscrollen</title>
+<style>
+:root {
+  --bg: #0E100F; --text: #F2F4F1; --text-2: rgba(242,244,241,.72);
+  --glass: rgba(14,16,15,.42); --glass-line: rgba(255,255,255,.14);
+  --accent: #9DBF98; --like: #E8877D;
+  --ease: cubic-bezier(.2,.7,.2,1);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); }
+body { font: 16px/22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif; overflow: hidden; }
+button { font: inherit; color: inherit; }
+
+.feed {
+  height: 100vh; height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory;
+  overscroll-behavior: contain; scrollbar-width: none;
+}
+.feed::-webkit-scrollbar { display: none; }
+.slide {
+  position: relative; height: 100vh; height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always;
+  display: grid; place-items: center; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 30%, #1E2A1D 0%, var(--bg) 70%);
+}
+.slide video {
+  width: 100%; height: 100%; object-fit: contain; background: transparent; display: block;
+}
+@media (max-aspect-ratio: 10/16) { .slide video { object-fit: cover; } }
+
+/* Placeholder shown until the video has a frame */
+.ph {
+  position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none;
+  transition: opacity .3s var(--ease);
+}
+.ph span {
+  width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--glass); border: 1px solid var(--glass-line);
+}
+.ph svg { width: 22px; height: 22px; }
+.slide.ready .ph { opacity: 0; }
+.slide.loading .ph span { animation: pulse 1.2s var(--ease) infinite; }
+@keyframes pulse { 50% { transform: scale(.9); opacity: .6; } }
+
+/* Bottom text */
+.info {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 72px 76px calc(26px + env(safe-area-inset-bottom, 0px)) 16px;
+  background: linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,0)); pointer-events: none;
+}
+.info .kicker { margin: 0 0 4px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.info h2 { margin: 0 0 4px; font-size: 18px; line-height: 24px; letter-spacing: -0.01em; }
+.info p { margin: 0; font-size: 14px; line-height: 20px; color: var(--text-2); }
+
+/* Progress line */
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,.16); }
+.prog i { display: block; height: 100%; width: 0; background: var(--text); }
+
+/* Side buttons */
+.side {
+  position: absolute; right: 10px; bottom: calc(34px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 14px; align-items: center;
+}
+.side button {
+  width: 48px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; border: 0; padding: 0; cursor: pointer; font-size: 12px; line-height: 14px; color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+.side .ic {
+  width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s var(--ease);
+}
+.side button:active .ic { transform: scale(.9); }
+.side svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.side .liked .ic { color: var(--like); }
+.side .liked svg { fill: currentColor; }
+
+/* Top bar: counter */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 12px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,0));
+}
+.topbar b { font-size: 15px; letter-spacing: -0.01em; }
+.dots { display: flex; gap: 5px; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .2s, transform .2s; }
+.dots i.on { background: var(--text); transform: scale(1.2); }
+
+/* Centre flash for play/pause */
+.flash {
+  position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--glass); opacity: 0; pointer-events: none;
+}
+.flash svg { width: 30px; height: 30px; fill: var(--text); }
+.flash.show { animation: flash .6s var(--ease); }
+.slide.paused .flash { opacity: 1; animation: none; }
+@keyframes flash { 0% { opacity: 1; transform: scale(.8); } 100% { opacity: 0; transform: scale(1.15); } }
+
+/* Start overlay (browsers need one tap before sound can play) */
+.start {
+  position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; text-align: center; padding: 24px;
+  background: rgba(10,12,11,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.start.hide { display: none; }
+.start-card { max-width: 320px; }
+.start h1 { margin: 0 0 8px; font-size: 24px; line-height: 30px; letter-spacing: -0.02em; }
+.start p { margin: 0 0 20px; color: var(--text-2); }
+.start button {
+  min-height: 48px; padding: 0 24px; border-radius: 999px; border: 0; cursor: pointer;
+  background: var(--text); color: #121412; font-weight: 600;
+}
+.start .small { margin: 14px 0 0; font-size: 13px; line-height: 18px; }
+
+/* End card */
+.end { flex-direction: column; text-align: center; padding: 24px; }
+.end-card { max-width: 320px; }
+.end h2 { margin: 0 0 8px; font-size: 22px; line-height: 28px; }
+.end p { margin: 0 0 20px; color: var(--text-2); }
+.end button {
+  min-height: 46px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--glass-line); cursor: pointer;
+  background: var(--glass); color: var(--text); font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="topbar"><b>Biologie</b><div class="dots" id="dots"></div></div>
+<main class="feed" id="feed"></main>
+
+<div class="start" id="start">
+  <div class="start-card">
+    <h1>Biologie doomscrollen</h1>
+    <p>5 kurze Videos zum Teststoff Neurobiologie. Nach oben wischen für das nächste Video, tippen zum Pausieren.</p>
+    <button type="button" id="go">Mit Ton starten</button>
+    <p class="small">Jedes Video ist etwa 11–17 MB groß. Im WLAN schauen spart Datenvolumen.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var VIDEOS = [
+    { src: "../videos/1-reiz-nervenzelle.mp4", topic: "Nervenzelle", title: "Vom Reiz zur Reaktion", text: "Reiz-Reaktions-Kette und der Aufbau einer Nervenzelle" },
+    { src: "../videos/2-ruhe-aktionspotenzial.mp4", topic: "Erregung", title: "Ruhe- und Aktionspotenzial", text: "–70 mV, Natrium-Kalium-Pumpe und die fünf Phasen" },
+    { src: "../videos/3-saltatorisch-ms.mp4", topic: "Erregungsleitung", title: "Saltatorisch und Multiple Sklerose", text: "Von Schnürring zu Schnürring, und was bei MS passiert" },
+    { src: "../videos/4-synapse-gifte.mp4", topic: "Synapse", title: "Synapse und Synapsengifte", text: "Transmitter, Krampf oder Lähmung" },
+    { src: "../videos/5-auge-farbsehen.mp4", topic: "Auge", title: "Auge und Farbsehen", text: "Netzhaut, Stäbchen und Zapfen, additive Lichtmischung" }
+  ];
+
+  var STORE = "biologie-doomscrollen-v1";
+  function load() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } }
+  function save(s) { try { localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) {} }
+  var state = load(); state.likes = state.likes || {};
+
+  var ICON = {
+    play: '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+    pause: '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+    heart: '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg>',
+    sound: '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>',
+    mute: '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM17 9l5 6M22 9l-5 6"/></svg>'
+  };
+
+  var feed = document.getElementById("feed");
+  var dots = document.getElementById("dots");
+  var muted = false, started = false, current = -1;
+
+  VIDEOS.forEach(function (v, n) {
+    var s = document.createElement("section");
+    s.className = "slide";
+    s.dataset.i = n;
+    s.innerHTML =
+      '<video playsinline preload="none" src="' + v.src + '#t=0.1" aria-label="' + v.title + '"></video>' +
+      '<div class="ph"><span>' + ICON.play + "</span></div>" +
+      '<div class="flash">' + ICON.pause + "</div>" +
+      '<div class="info"><p class="kicker">' + (n + 1) + " / " + VIDEOS.length + " · " + v.topic + "</p><h2>" + v.title + "</h2><p>" + v.text + "</p></div>" +
+      '<div class="side">' +
+        '<button type="button" class="like' + (state.likes[n] ? " liked" : "") + '" aria-pressed="' + !!state.likes[n] + '" aria-label="Gefällt mir"><span class="ic">' + ICON.heart + "</span><span>Merken</span></button>" +
+        '<button type="button" class="snd" aria-label="Ton an oder aus"><span class="ic">' + ICON.sound + "</span><span>Ton</span></button>" +
+      "</div>" +
+      '<div class="prog"><i></i></div>';
+    feed.appendChild(s);
+    var d = document.createElement("i"); dots.appendChild(d);
+  });
+
+  var end = document.createElement("section");
+  end.className = "slide end";
+  end.innerHTML = '<div class="end-card"><h2>Alle 5 geschafft</h2><p>Jetzt im Biologie-Trainer testen, ob alles sitzt.</p>' +
+    '<button type="button" id="restart">' + "Von vorne" + "</button></div>";
+  feed.appendChild(end);
+
+  var slides = [].slice.call(feed.querySelectorAll(".slide[data-i]"));
+  var videos = slides.map(function (s) { return s.querySelector("video"); });
+
+  videos.forEach(function (v, n) {
+    var s = slides[n], bar = s.querySelector(".prog i");
+    v.addEventListener("loadeddata", function () { s.classList.add("ready"); s.classList.remove("loading"); });
+    v.addEventListener("waiting", function () { s.classList.add("loading"); });
+    v.addEventListener("playing", function () { s.classList.remove("loading", "paused"); s.classList.add("ready"); });
+    v.addEventListener("timeupdate", function () { if (v.duration) bar.style.width = (100 * v.currentTime / v.duration) + "%"; });
+    v.addEventListener("ended", function () {
+      // Go on to the next video by itself, like a feed
+      var next = slides[n + 1] || end;
+      next.scrollIntoView({ behavior: "smooth" });
+    });
+    s.addEventListener("click", function (e) {
+      if (e.target.closest(".side")) return;
+      if (!started) return;
+      var f = s.querySelector(".flash");
+      if (v.paused) { v.play(); s.classList.remove("paused"); f.innerHTML = ICON.play; }
+      else { v.pause(); s.classList.add("paused"); f.innerHTML = ICON.pause; }
+      f.classList.remove("show"); void f.offsetWidth; f.classList.add("show");
+    });
+    s.querySelector(".like").addEventListener("click", function () {
+      state.likes[n] = !state.likes[n]; save(state);
+      this.classList.toggle("liked", state.likes[n]); this.setAttribute("aria-pressed", state.likes[n]);
+    });
+    s.querySelector(".snd").addEventListener("click", function () { setMuted(!muted); });
+  });
+
+  function setMuted(m) {
+    muted = m;
+    videos.forEach(function (v) { v.muted = m; });
+    slides.forEach(function (s) {
+      var b = s.querySelector(".snd");
+      b.querySelector(".ic").innerHTML = m ? ICON.mute : ICON.sound;
+      b.querySelector("span:last-child").textContent = m ? "Stumm" : "Ton";
+    });
+  }
+
+  function activate(n) {
+    if (n === current) return;
+    current = n;
+    [].forEach.call(dots.children, function (d, k) { d.classList.toggle("on", k === n); });
+    videos.forEach(function (v, k) {
+      if (k === n) return;
+      if (!v.paused) v.pause();
+    });
+    if (n < 0) return;
+    var v = videos[n];
+    v.preload = "auto";
+    // Warm up the next one a little so swiping feels quick
+    if (videos[n + 1]) videos[n + 1].preload = "metadata";
+    if (!started) return;
+    slides[n].classList.remove("paused");
+    if (v.ended) v.currentTime = 0;
+    v.muted = muted;
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {
+      // Sound blocked: play muted instead
+      setMuted(true); v.play().catch(function () {});
+    });
+  }
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting || e.intersectionRatio < 0.6) return;
+        var i = e.target.dataset.i;
+        activate(i === undefined ? -1 : Number(i));
+      });
+    }, { root: feed, threshold: [0.6] });
+    slides.concat(end).forEach(function (s) { io.observe(s); });
+  }
+
+  videos[0].preload = "metadata";
+
+  document.getElementById("go").addEventListener("click", function () {
+    started = true;
+    document.getElementById("start").classList.add("hide");
+    var n = current < 0 ? 0 : current; current = -1; activate(n);
+  });
+  document.getElementById("restart").addEventListener("click", function () {
+    videos.forEach(function (v) { v.currentTime = 0; });
+    slides[0].scrollIntoView({ behavior: "smooth" });
+  });
+
+  // Keyboard on desktop: arrows to switch, space to pause
+  document.addEventListener("keydown", function (e) {
+    if (!started) return;
+    var all = slides.concat(end), idx = current < 0 ? all.length - 1 : current;
+    if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); (all[idx + 1] || all[idx]).scrollIntoView({ behavior: "smooth" }); }
+    else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); (all[idx - 1] || all[idx]).scrollIntoView({ behavior: "smooth" }); }
+    else if (e.key === " " && current >= 0) { e.preventDefault(); slides[current].click(); }
+  });
+})();
+</script>
+</body>
+</html>

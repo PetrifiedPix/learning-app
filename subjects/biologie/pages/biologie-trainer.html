@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biologie-Trainer</title>
+<style>
+:root {
+  --bg: #F7F8FA; --surface: #FFFFFF; --surface-2: #F0F2F5;
+  --border: #E4E7EC; --border-strong: #D0D5DD;
+  --text: #1D2330; --text-2: #667085;
+  --primary: #2E3646; --on-primary: #FFFFFF;
+  --accent: #7BA696; --accent-soft: #EAF2EE; --on-accent-soft: #2F5446;
+  --tint: #6E9068; --tint-soft: #ECF2EA;
+  --success: #3E8E66; --error: #C8564B;
+  --success-bg: rgba(62,142,102,.10); --error-bg: rgba(200,86,75,.08);
+  --shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.06);
+  --ease: cubic-bezier(.2,.7,.2,1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111317; --surface: #181B21; --surface-2: #20242B;
+    --border: #2A2F37; --border-strong: #3A404A;
+    --text: #ECEEF2; --text-2: #9AA1AD;
+    --primary: #A9CDBD; --on-primary: #12201A;
+    --accent: #8DB8A6; --accent-soft: #1C2A25; --on-accent-soft: #CFE5DA;
+    --tint: #9DBF98; --tint-soft: #1F2A1E;
+    --success: #6CC497; --error: #E8877D;
+    --success-bg: rgba(108,196,151,.14); --error-bg: rgba(232,135,125,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111317; --surface: #181B21; --surface-2: #20242B;
+  --border: #2A2F37; --border-strong: #3A404A;
+  --text: #ECEEF2; --text-2: #9AA1AD;
+  --primary: #A9CDBD; --on-primary: #12201A;
+  --accent: #8DB8A6; --accent-soft: #1C2A25; --on-accent-soft: #CFE5DA;
+  --tint: #9DBF98; --tint-soft: #1F2A1E;
+  --success: #6CC497; --error: #E8877D;
+  --success-bg: rgba(108,196,151,.14); --error-bg: rgba(232,135,125,.14);
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 17px/26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+main {
+  max-width: 680px; margin: 0 auto;
+  padding: 16px 16px calc(32px + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 640px) { main { padding-left: 24px; padding-right: 24px; } }
+h1, h2 { letter-spacing: -0.02em; margin: 0; }
+h1 { font-size: 26px; line-height: 32px; }
+h2 { font-size: 20px; line-height: 28px; }
+p { margin: 0; }
+.muted { color: var(--text-2); }
+.small { font-size: 15px; line-height: 22px; }
+.xs { font-size: 13px; line-height: 18px; }
+.label { font-size: 13px; line-height: 18px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+button { font: inherit; color: inherit; }
+.stack > * + * { margin-top: 16px; }
+.rise { animation: rise 320ms var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes pop { 50% { transform: scale(1.03); } }
+@keyframes shake { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+
+/* Home */
+.intro { margin: 8px 0 24px; }
+.intro p { margin-top: 6px; }
+.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.row {
+  width: 100%; min-height: 76px; display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; text-align: left; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), border-color 160ms;
+}
+.row:hover { border-color: var(--border-strong); box-shadow: var(--shadow); transform: translateY(-1px); }
+.row:active { transform: scale(.99); }
+.tile {
+  flex: none; width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center; background: var(--tint-soft); color: var(--tint);
+}
+.tile svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.row-text { flex: 1; min-width: 0; }
+.row-text strong { display: block; font-weight: 600; }
+.row-text span { display: block; color: var(--text-2); font-size: 15px; line-height: 22px; }
+.chip {
+  flex: none; font-size: 13px; line-height: 18px; padding: 3px 10px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--on-accent-soft); font-weight: 600;
+}
+.chev { flex: none; width: 18px; height: 18px; color: var(--text-2); fill: none; stroke: currentColor; stroke-width: 1.75; }
+
+/* Session chrome */
+.top { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.back {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 12px 0 6px;
+  border: 0; background: none; color: var(--text-2); cursor: pointer; border-radius: 999px;
+}
+.back:hover { background: var(--surface-2); color: var(--text); }
+.back svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; }
+.top .count { margin-left: auto; color: var(--text-2); font-size: 15px; }
+.bar { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+.bar i { display: block; height: 100%; background: var(--tint); border-radius: 999px; transition: width 300ms var(--ease); }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
+  padding: 24px 20px; box-shadow: var(--shadow);
+}
+.card h2 { margin-top: 6px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 52px; padding: 0 24px; border-radius: 999px; cursor: pointer;
+  border: 1px solid transparent; font-weight: 600;
+  transition: transform 120ms var(--ease), background 160ms, border-color 160ms;
+}
+.btn:active { transform: scale(.98); }
+.btn-primary { background: var(--primary); color: var(--on-primary); }
+.btn-secondary { background: var(--surface); border-color: var(--border); }
+.btn-secondary:hover { border-color: var(--border-strong); }
+.btn:disabled { opacity: .45; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.actions .btn { flex: 1 1 160px; }
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+/* Filter chips */
+.filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin: 0 -16px 20px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; }
+.filters::-webkit-scrollbar { display: none; }
+.filter {
+  flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); font-size: 15px;
+}
+.filter[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+
+/* Exam questions */
+textarea {
+  width: 100%; min-height: 120px; margin-top: 16px; padding: 12px 14px; resize: vertical;
+  font: inherit; color: var(--text); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 12px;
+}
+textarea:focus { outline: none; border-color: var(--primary); }
+.points { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.point {
+  display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--bg);
+  animation: rise 280ms var(--ease) both; animation-delay: calc(var(--i, 0) * 50ms);
+}
+.point input { flex: none; width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--success); }
+.point:has(input:checked) { border-color: var(--success); background: var(--success-bg); }
+.hint { margin-top: 12px; }
+
+/* Sorting */
+.item {
+  min-height: 140px; display: grid; place-items: center; text-align: center;
+  font-size: 22px; line-height: 30px; font-weight: 700; letter-spacing: -0.01em;
+  animation: rise 300ms var(--ease) both;
+}
+.item.ok { border-color: var(--success); background: var(--success-bg); animation: pop 300ms var(--ease); }
+.item.bad { border-color: var(--error); background: var(--error-bg); animation: shake 320ms var(--ease); }
+.cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.cat {
+  min-height: 64px; padding: 10px 12px; border-radius: 16px; cursor: pointer; font-weight: 600;
+  border: 1px solid var(--border-strong); background: var(--surface); line-height: 22px;
+  transition: transform 120ms var(--ease), border-color 160ms;
+}
+.cat:hover { border-color: var(--primary); }
+.cat:active { transform: scale(.98); }
+.cat.right { border-color: var(--success); background: var(--success-bg); }
+.cat.wrong { border-color: var(--error); background: var(--error-bg); }
+.feedback { margin-top: 16px; padding: 12px 14px; border-radius: 12px; font-size: 15px; line-height: 22px; animation: rise 240ms var(--ease) both; }
+.feedback.ok { background: var(--success-bg); color: var(--text); }
+.feedback.bad { background: var(--error-bg); color: var(--text); }
+.feedback strong { color: var(--success); }
+.feedback.bad strong { color: var(--error); }
+
+/* Timeline */
+.pool, .order { display: grid; gap: 8px; }
+.ev {
+  width: 100%; min-height: 56px; padding: 10px 14px; text-align: left; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+  display: flex; gap: 12px; align-items: center; line-height: 22px;
+  animation: rise 260ms var(--ease) both; animation-delay: calc(var(--i, 0) * 40ms);
+}
+.ev:hover { border-color: var(--border-strong); }
+.ev .n {
+  flex: none; width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center;
+  background: var(--surface-2); color: var(--text-2); font-size: 13px; font-weight: 700;
+}
+.order .ev .n { background: var(--tint-soft); color: var(--tint); }
+.ev .yr { margin-left: auto; font-weight: 700; color: var(--text-2); font-size: 15px; white-space: nowrap; }
+.ev.ok { border-color: var(--success); background: var(--success-bg); }
+.ev.bad { border-color: var(--error); background: var(--error-bg); }
+.empty { padding: 14px; border: 1px dashed var(--border-strong); border-radius: 12px; color: var(--text-2); font-size: 15px; text-align: center; }
+
+/* Gap text */
+.gaptext { font-size: 18px; line-height: 36px; }
+.gap {
+  display: inline-block; min-width: 92px; min-height: 32px; margin: 0 2px; padding: 0 10px;
+  border: 0; border-bottom: 2px solid var(--border-strong); border-radius: 6px 6px 0 0;
+  background: var(--surface-2); cursor: pointer; line-height: 32px; vertical-align: baseline;
+  font-weight: 600;
+}
+.gap.sel { border-bottom-color: var(--primary); background: var(--tint-soft); }
+.gap.ok { border-bottom-color: var(--success); background: var(--success-bg); }
+.gap.bad { border-bottom-color: var(--error); background: var(--error-bg); }
+.gap .fix { display: block; font-size: 13px; line-height: 16px; color: var(--success); font-weight: 600; padding-bottom: 2px; }
+.bank { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.word {
+  min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border-strong); background: var(--surface); font-size: 16px;
+  transition: opacity 160ms, transform 120ms var(--ease);
+}
+.word:active { transform: scale(.97); }
+.word.used { opacity: .3; pointer-events: none; }
+
+/* Results */
+.score { font-size: 44px; line-height: 48px; font-weight: 700; letter-spacing: -0.03em; }
+.review { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.review li { padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: 15px; line-height: 22px; }
+.review li b { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Content (PowerPoints und Arbeitsblätter von Prof. Prambauer, eduvidual) ----------
+  var TOPICS = ["Nervenzelle", "Ruhe- und Aktionspotenzial", "Synapse und Gifte", "Multiple Sklerose", "Auge", "Netzhaut und Farbsehen"];
+
+  // Prüfungsfragen: [Stoffgebiet 0–5, Frage, [Punkte der Musterlösung]]
+  var EXAM = [
+    [0, "Nenne die Reizarten, auf die unser Nervensystem reagiert.", [
+      "Optische Reize", "Akustische Reize", "Chemische Reize", "Druck", "Temperatur"]],
+    [0, "Beschreibe den Weg vom Reiz zur Reaktion.", [
+      "Der Reiz (Stimulus) wird von Rezeptoren bzw. Sinneszellen aufgenommen.",
+      "Dort entsteht eine Erregung, die über Nerven weitergeleitet wird.",
+      "Gehirn und Rückenmark (ZNS) verarbeiten die Erregung.",
+      "Befehle (= Erregungen) werden über Nerven weitergeleitet.",
+      "Das Erfolgsorgan (Muskeln, Drüsen, Eingeweide) reagiert."]],
+    [0, "Erkläre die Reiz-Reaktions-Kette am Beispiel der heißen Herdplatte.", [
+      "Reiz: die heiße Temperatur der Herdplatte.",
+      "Rezeptoren: Wärme- und Schmerzrezeptoren in der Haut erzeugen eine Erregung.",
+      "Erregungsleitung über sensorische Nerven zum Rückenmark.",
+      "Verarbeitung im Rückenmark/Gehirn: Befehl „Hand wegziehen“.",
+      "Erregungsleitung über motorische Nerven; Erfolgsorgan: die Armmuskeln ziehen die Hand weg."]],
+    [0, "Beschreibe den Aufbau einer Nervenzelle und die Aufgaben ihrer Teile.", [
+      "Dendriten: verzweigte Fortsätze, nehmen Signale auf und leiten sie zum Zellkörper.",
+      "Zellkörper (Soma): Zellkern und Organellen, verarbeitet die Signale.",
+      "Axon: leitet die Erregung vom Axonhügel weiter, bis zu 1 m lang.",
+      "Myelinscheide (Gliazellen): isoliert, ernährt, schützt, macht die Leitung schneller.",
+      "Ranvier'sche Schnürringe: Einschnürungen zwischen den Myelinscheiden.",
+      "Synaptische Endknöpfchen: geben das Signal über Synapsen weiter."]],
+    [0, "Was ist ein Nerv? Unterscheide sensorische und motorische Nerven.", [
+      "Ein Nerv besteht aus gebündelten Nervenfasern (Axon + Myelinscheide), umhüllt von Bindegewebe.",
+      "Sensorische Nerven (Empfindungsnerven) leiten Informationen von den Sinnesorganen zum ZNS.",
+      "Motorische Nerven (Bewegungsnerven) senden Befehle vom ZNS zu den Muskeln."]],
+
+    [1, "Erkläre, wie das Ruhepotenzial entsteht.", [
+      "Spannung zwischen Innen- und Außenseite einer unerregten Nervenzelle, ca. –70 mV.",
+      "Ungleiche Ionenverteilung: K⁺ und organische Anionen innen, Na⁺ und Cl⁻ außen.",
+      "Die Membran ist selektiv permeabel: K⁺ diffundiert durch Kaliumkanäle hinaus.",
+      "Dadurch wird das Zellinnere negativ.",
+      "Die Ladungsdifferenz zieht K⁺ zurück: elektrochemisches Gleichgewicht."]],
+    [1, "Warum braucht die Nervenzelle für das Ruhepotenzial ständig Energie?", [
+      "Durch Natrium-Leckströme gelangen ständig einige Na⁺ in die Zelle und stören das Ruhepotenzial.",
+      "Die Natrium-Kalium-Pumpe transportiert aktiv 3 Na⁺ hinaus und 2 K⁺ hinein.",
+      "Sie verbraucht dafür ATP und hält das Ruhepotenzial stabil.",
+      "Das Gehirn verbraucht ca. 20 % der Körperenergie für die Pumpen."]],
+    [1, "Beschreibe den Ablauf eines Aktionspotenzials in fünf Phasen.", [
+      "Ruhepotenzial: ca. –70 mV, innen negativ, Na⁺ außen, K⁺ innen.",
+      "Depolarisation: Schwellenwert (ca. –50 mV) erreicht, Na⁺-Kanäle öffnen, Na⁺ strömt ein, bis ca. +30 mV.",
+      "Repolarisation: K⁺-Kanäle öffnen verzögert, K⁺ strömt aus, das Potenzial wird wieder negativ.",
+      "Hyperpolarisation: kurzzeitig negativer als das Ruhepotenzial.",
+      "Rückkehr zum Ruhepotenzial: die Natrium-Kalium-Pumpe stellt die Ionenverteilung wieder her (ATP)."]],
+    [1, "Erkläre das Alles-oder-Nichts-Prinzip und die Refraktärzeit.", [
+      "Ein Aktionspotenzial entsteht nur bei einem überschwelligen Reiz.",
+      "Wird der Schwellenwert erreicht, entsteht immer ein vollständiges Aktionspotenzial, sonst gar keines.",
+      "Refraktärzeit: Erholungsphase, in der kein neues Aktionspotenzial ausgelöst werden kann.",
+      "Sie verhindert, dass Signale rückwärts laufen oder zu dicht aufeinander folgen."]],
+    [1, "Erkläre die saltatorische Erregungsleitung.", [
+      "Gibt es bei markhaltigen Axonen (mit Myelinscheide).",
+      "Die Erregung springt von Ranvier'schem Schnürring zu Schnürring.",
+      "Dadurch ist sie besonders schnell: bis zu 120 m/s.",
+      "Die Erregung läuft nur in eine Richtung."]],
+
+    [2, "Beschreibe die Vorgänge an einer Synapse.", [
+      "Ein Aktionspotenzial erreicht das Endknöpfchen; Calciumkanäle öffnen, Ca²⁺ strömt ein.",
+      "Vesikel wandern zur präsynaptischen Membran und schütten Neurotransmitter in den synaptischen Spalt.",
+      "Die Transmitter binden an Rezeptoren der postsynaptischen Membran und öffnen Ionenkanäle.",
+      "Je nach Höhe des Ioneneinstroms entsteht in der nächsten Zelle ein Aktionspotenzial oder nicht.",
+      "Das Signal wird elektrisch → chemisch → elektrisch übertragen."]],
+    [2, "Was sind Neurotransmitter? Nenne drei mit ihrer Funktion.", [
+      "Chemische Botenstoffe, die Signale an den Synapsen übertragen.",
+      "Acetylcholin: Muskelkontraktion und Gedächtnis.",
+      "Dopamin: erregend; Bewegung, Motivation, Belohnung.",
+      "Serotonin: hemmend; Stimmung, Schlaf, Schmerzempfinden.",
+      "Auch möglich: Endorphine (Schmerz), GABA (Ruhe), Adrenalin/Noradrenalin (Stress)."]],
+    [2, "Ein Gift zerstört das Enzym, das den Transmitter abbaut. Krampf oder Lähmung? Begründe.", [
+      "Krampf (Übererregung).",
+      "Der Transmitter wird nicht mehr abgebaut und bleibt an den Rezeptoren.",
+      "Die Ionenkanäle bleiben offen, die nächste Zelle wird dauernd erregt."]],
+    [2, "Ein Gift verhindert, dass die Bläschen mit der Membran verschmelzen. Krampf oder Lähmung? Begründe.", [
+      "Lähmung.",
+      "Es wird kein Transmitter in den synaptischen Spalt ausgeschüttet.",
+      "Die nächste Zelle (z. B. der Muskel) wird nicht mehr erregt."]],
+    [2, "Erkläre die Faustregel, mit der man bei Synapsengiften Krampf und Lähmung unterscheidet.", [
+      "Zu viel Transmitter, zu lange Wirkung oder leichtere Erregung → Krampf.",
+      "Beispiele Krampf: Abbau-Enzym zerstört, alle Bläschen verschmelzen schlagartig, Schwellenwert gesenkt.",
+      "Kein oder zu wenig Transmitter oder keine Erregung möglich → Lähmung.",
+      "Beispiele Lähmung: Bläschen verschmelzen nicht, Transmitter zerstört, Bindungsstelle verändert, weniger Na⁺ im Spalt."]],
+
+    [3, "Erkläre, was bei Multipler Sklerose passiert und welche Folgen das für die Erregungsleitung hat.", [
+      "MS ist eine Autoimmunkrankheit: das Immunsystem greift die Myelinscheiden in Gehirn und Rückenmark an.",
+      "Ohne intaktes Myelin funktioniert die saltatorische Erregungsleitung nicht mehr.",
+      "Signale werden langsamer, fehlerhaft oder gar nicht weitergeleitet.",
+      "Die Symptome hängen davon ab, wo die Schäden liegen."]],
+    [3, "Nenne Symptome und die Verlaufsformen von MS.", [
+      "Symptome: Sehstörungen, Kribbeln und Taubheit, Muskelschwäche, Gleichgewichtsprobleme, Müdigkeit, Konzentrationsprobleme.",
+      "Schubförmig (RRMS): Schübe, die sich ganz oder teilweise zurückbilden.",
+      "Sekundär progredient (SPMS): aus der schubförmigen Form, langsame Verschlechterung.",
+      "Primär progredient (PPMS): von Anfang an langsame Verschlechterung ohne Schübe."]],
+    [3, "Ist MS heilbar? Welche Behandlung gibt es?", [
+      "MS ist nicht heilbar.",
+      "Kortison bei akuten Schüben.",
+      "Immuntherapien langfristig: weniger Schübe, langsamerer Verlauf.",
+      "Physiotherapie und andere Therapien gegen die Symptome."]],
+
+    [4, "Nenne die Teile des Auges und ihre Aufgaben (mindestens sechs).", [
+      "Hornhaut: klare Schutzschicht, Lichtbrechung.",
+      "Iris und Pupille: regeln den Lichteinfall.",
+      "Linse: verformbar, Scharfstellen.",
+      "Glaskörper: gelartige Masse, stabilisiert das Auge.",
+      "Netzhaut: mit Stäbchen und Zapfen; gelber Fleck = schärfstes Sehen.",
+      "Sehnerv zum Gehirn; Aderhaut versorgt, Lederhaut schützt."]],
+    [4, "Warum sehen wir am blinden Fleck nichts, und wo sehen wir am schärfsten?", [
+      "Der blinde Fleck ist die Austrittsstelle des Sehnervs.",
+      "Dort gibt es keine Stäbchen und Zapfen.",
+      "Am schärfsten sehen wir im gelben Fleck (Makula), genau in der zentralen Sehgrube.",
+      "Dort ist die Zapfendichte am höchsten."]],
+    [4, "Beschreibe den Aufbau der Augenwand von außen nach innen.", [
+      "Lederhaut: äußere, feste Schutzschicht.",
+      "Aderhaut: versorgt die Netzhaut mit Sauerstoff und Nährstoffen.",
+      "Pigmentschicht: dunkel, schluckt das Licht.",
+      "Netzhaut: mit den Lichtsinneszellen."]],
+
+    [5, "Beschreibe den Aufbau der Netzhaut und die Aufgaben der Schichten.", [
+      "Pigmentzellen: dunkle Schicht, schluckt das Licht und versorgt die Sinneszellen.",
+      "Lichtsinneszellen (Stäbchen und Zapfen): wandeln Licht in elektrische Erregung um.",
+      "Schaltzellen: verarbeiten die Signale, verstärken Kontraste.",
+      "Ganglienzellen: erzeugen das Aktionspotenzial; ihre Axone bilden den Sehnerv.",
+      "Das Licht muss zuerst durch die Nervenzellschichten, bevor es die Sinneszellen erreicht."]],
+    [5, "Vergleiche Stäbchen und Zapfen.", [
+      "Stäbchen: Hell-Dunkel-Sehen, sehr lichtempfindlich, nur Graustufen, tagblind.",
+      "Stäbchen liegen vor allem am Rand der Netzhaut; Sehpigment Rhodopsin.",
+      "Zapfen: Tages- und Farbsehen, 100-fach weniger lichtempfindlich, nachtblind.",
+      "Zapfen: drei Typen (blau, grün, rot), im gelben Fleck nur Zapfen."]],
+    [5, "Erkläre, was in einem Stäbchen passiert, wenn Licht darauf fällt.", [
+      "Das Sehpigment Rhodopsin (Sehpurpur) zerfällt in Retinal und Opsin.",
+      "Dabei entsteht ein Spannungsimpuls (Rezeptorpotenzial).",
+      "Er wird von den Schaltzellen erfasst und über die Ganglienzellen und den Sehnerv ans Gehirn weitergeleitet.",
+      "Danach wird das Rhodopsin wieder aufgebaut."]],
+    [5, "Wie entstehen Farben? Erkläre die additive Lichtmischung.", [
+      "Es gibt drei Zapfentypen: blau (~430 nm), grün (~535 nm), rot (~570 nm).",
+      "Farbtöne entstehen durch gleichzeitige Aktivierung verschiedener Zapfentypen.",
+      "Das Gehirn interpretiert das Verhältnis der Erregung.",
+      "Rot, Grün und Blau gleich stark ergibt Weiß.",
+      "Wir können bis zu 2 Millionen Farbtöne unterscheiden."]],
+    [5, "Warum sehen wir in der Nacht keine Farben?", [
+      "Zapfen brauchen viel Licht, sie sind nachtblind.",
+      "Bei wenig Licht arbeiten nur die Stäbchen.",
+      "Stäbchen melden nur Helligkeit, also Graustufen."]]
+  ];
+
+  // Zuordnen: zwei Kategorien je Set
+  var SORTS = [
+    { name: "Krampf oder Lähmung?", sub: "Synapsengifte", cats: ["Krampf", "Lähmung"], items: [
+      ["Alle Bläschen verschmelzen schlagartig mit der Membran", 0], ["Das Transmitter-abbauende Enzym wird zerstört", 0],
+      ["Der Schwellenwert der postsynaptischen Zelle wird gesenkt", 0],
+      ["Die Bläschen verschmelzen nicht mit der Membran", 1], ["Der Transmitter wird zerstört", 1],
+      ["Die Transmitterbindungsstelle wird verändert", 1], ["Transmitterbruchstücke können nicht zurück ins Endknöpfchen", 1],
+      ["Weniger Natriumionen im synaptischen Spalt", 1]] },
+    { name: "Stäbchen oder Zapfen?", sub: "Lichtsinneszellen", cats: ["Stäbchen", "Zapfen"], items: [
+      ["Hell-Dunkel-Sehen", 0], ["Sehr lichtempfindlich", 0], ["Nur Graustufen", 0], ["Vor allem am Rand der Netzhaut", 0],
+      ["Sehpigment Rhodopsin (Sehpurpur)", 0], ["Tagblind", 0],
+      ["Tages- und Farbsehen", 1], ["100-fach weniger lichtempfindlich", 1], ["Drei verschiedene Typen", 1],
+      ["Im gelben Fleck", 1], ["Nachtblind", 1], ["Bis zu 2 Millionen Farbtöne", 1]] },
+    { name: "Innen oder außen?", sub: "Ionen beim Ruhepotenzial", cats: ["Vor allem innen", "Vor allem außen"], items: [
+      ["Kaliumionen (K⁺)", 0], ["Organische Anionen", 0], ["Negative Ladung", 0],
+      ["Natriumionen (Na⁺)", 1], ["Chloridionen (Cl⁻)", 1], ["Positive Ladung", 1]] },
+    { name: "Erregend oder hemmend?", sub: "Neurotransmitter", cats: ["Erregend / aktivierend", "Hemmend / beruhigend"], items: [
+      ["Dopamin", 0], ["Adrenalin/Noradrenalin", 0], ["Acetylcholin (Muskelkontraktion)", 0],
+      ["Serotonin", 1], ["GABA", 1], ["Endorphine (unterdrücken Schmerz)", 1]] },
+    { name: "Sensorisch oder motorisch?", sub: "Nerven", cats: ["Sensorische Nerven", "Motorische Nerven"], items: [
+      ["Empfindungsnerven", 0], ["Von den Sinnesorganen zum ZNS", 0], ["Melden „heiß!“ von der Haut", 0],
+      ["Bewegungsnerven", 1], ["Vom ZNS zu den Muskeln", 1], ["Befehl „Hand wegziehen“ an den Arm", 1]] },
+    { name: "Na⁺ oder K⁺?", sub: "Aktionspotenzial", cats: ["Natrium (Na⁺)", "Kalium (K⁺)"], items: [
+      ["Strömt bei der Depolarisation ein", 0], ["Kanäle öffnen beim Schwellenwert", 0], ["Die Pumpe bringt 3 davon hinaus", 0],
+      ["Strömt bei der Repolarisation aus", 1], ["Kanäle öffnen verzögert", 1], ["Die Pumpe bringt 2 davon hinein", 1],
+      ["Diffundiert in Ruhe durch die Membran hinaus", 1]] }
+  ];
+
+  // Abläufe: Schritte in der richtigen Reihenfolge
+  var SEQS = [
+    { name: "Vom Reiz zur Reaktion", steps: ["Reiz", "Rezeptor / Sinneszelle", "Erregung", "Erregungsleitung (sensorisch)", "Rückenmark / Gehirn", "Befehl = Erregung", "Erregungsleitung (motorisch)", "Erfolgsorgan"] },
+    { name: "Ablauf eines Aktionspotenzials", steps: ["Ruhepotenzial (–70 mV)", "Schwellenwert erreicht (–50 mV)", "Depolarisation: Na⁺ strömt ein", "Spitze bei ca. +30 mV", "Repolarisation: K⁺ strömt aus", "Hyperpolarisation", "Natrium-Kalium-Pumpe stellt das Ruhepotenzial her"] },
+    { name: "Vorgänge an der Synapse", steps: ["Aktionspotenzial erreicht das Endknöpfchen", "Calciumkanäle öffnen, Ca²⁺ strömt ein", "Vesikel wandern zur präsynaptischen Membran", "Transmitter werden in den synaptischen Spalt ausgeschüttet", "Transmitter binden an Rezeptoren der postsynaptischen Membran", "Ionenkanäle öffnen sich", "Neues Aktionspotenzial in der nächsten Zelle"] },
+    { name: "Weg des Lichts durch das Auge", steps: ["Hornhaut", "Pupille", "Linse", "Glaskörper", "Netzhaut"] },
+    { name: "Netzhaut: Weg des Signals", steps: ["Licht trifft auf Stäbchen und Zapfen", "Rhodopsin zerfällt in Retinal und Opsin", "Rezeptorpotenzial entsteht", "Schaltzellen verarbeiten das Signal", "Ganglienzellen erzeugen Aktionspotenziale", "Sehnerv leitet zum Gehirn"] },
+    { name: "Augenwand von außen nach innen", steps: ["Lederhaut", "Aderhaut", "Pigmentschicht", "Netzhaut"] },
+    { name: "Aufbau der Nervenzelle, vom Signal-Eingang aus", steps: ["Dendriten", "Zellkörper (Soma)", "Axonhügel", "Axon mit Myelinscheide", "Synaptische Endknöpfchen"] }
+  ];
+
+  // Lückentexte: Lücken stehen in [eckigen Klammern]
+  var GAPS = [
+    { name: "Das Ruhepotenzial (AB 1.1.2)", text: "Das Ruhepotenzial ist die elektrische [Spannung], die zwischen der Innen- und Außenseite einer [unerregten] Nervenzelle herrscht. Es beträgt ungefähr [-70 Millivolt]. Es entsteht, weil die verschiedenen [Ionen] ungleich verteilt sind. Vor allem [Natriumionen] befinden sich außerhalb der Zelle, während [Kaliumionen] überwiegend im Zellinneren vorkommen. Zusätzlich gibt es innen viele organische [Anionen]. Die Zellmembran ist [selektiv] permeabel. Kaliumionen können gut aus der Zelle [hinausdiffundieren]. Dadurch wird das Zellinnere zunehmend [negativer]. Die entstehende elektrische [Ladungsdifferenz] zieht die Kaliumionen wieder zurück. So bildet sich ein [elektrochemisches] Gleichgewicht. Einige Natriumionen gelangen durch [Leckkanäle] in die Zelle. Damit das Ruhepotenzial [stabil] bleibt, arbeitet die [Natrium-Kalium-Pumpe]. Sie transportiert [drei Natriumionen] hinaus und [zwei Kaliumionen] hinein. Das benötigt [ATP]. Das Ruhepotenzial ist entscheidend für die [Erregbarkeit] der Nervenzelle; nur so kann sie ein [Aktionspotenzial] auslösen. Es ist die Grundlage der Informationsverarbeitung im [Nervensystem]." },
+    { name: "Das Aktionspotenzial (AB 1.1.3)", text: "Ein Aktionspotenzial entsteht, wenn ein Reiz den [Schwellenwert] von etwa [-50 Millivolt] überschreitet. Das [Ruhepotenzial] liegt bei etwa –70 Millivolt. Das Signal wird entlang des [Axons] weitergeleitet. Beim Schwellenwert öffnen sich [spannungsabhängige] Natriumkanäle, Na⁺ strömt ein und das Zellinnere wird [positiv]. Diese [Depolarisation] erreicht einen Spitzenwert von etwa [+30 Millivolt]. Danach öffnen sich spannungsabhängige [Kaliumkanäle], K⁺ strömt hinaus ([Repolarisation]). Fällt das Potenzial kurz unter das Ruhepotenzial, nennt man das [Hyperpolarisation]. Die [Natrium-Kalium-Pumpe] stellt die Ionenverteilung wieder her. In der [Refraktärzeit] kann kein neues [Aktionspotential] ausgelöst werden; so laufen Signale nicht [rückwärts]. Nach dem [Alles-oder-Nichts-Prinzip] entsteht immer ein vollständiges Aktionspotenzial. Bei [markhaltigen Axonen] springt das Signal von Schnürring zu Schnürring: [saltatorische Erregungsleitung]. Das ermöglicht schnelle [Informationsübertragung]." },
+    { name: "Sehen in Schwarzweiß und Farbe (AB 1.2.2)", text: "In der [Netzhaut] befinden sich zwei Sorten von Sehzellen: die schlanken [Stäbchen] und die dickeren [Zapfen]. Stäbchen sind für das [Schwarz-Weiß-Sehen] zuständig und arbeiten schon bei [geringen] Lichtmengen. Fällt Licht auf ein [Rhodopsinmolekül], so zerfällt dieses. Der Spannungsimpuls wird zu den [Schaltzellen] und über den [Sehnerv] ins Gehirn geleitet. Für Farben sind Stäbchen [blind]. Zapfen arbeiten erst bei [größeren] Lichtmengen. Es gibt [drei] Zapfentypen, für Rot, Grün und [Blau]. Werden mehrere gleichzeitig angeregt, setzt das [Gehirn] einen Gesamteindruck zusammen; alle zusammen ergeben [Weiß]. So unterscheiden wir bis zu 2 [Millionen] Farbtöne." },
+    { name: "Die Synapse", text: "Eine Synapse ist die [Verbindungsstelle] zwischen zwei Nervenzellen. Kommt ein Aktionspotenzial am [Endknöpfchen] an, öffnen sich [Calciumkanäle]. Dadurch werden [Vesikel] zur Membran gezogen und setzen [Neurotransmitter] in den synaptischen [Spalt] frei. Diese binden an Rezeptoren der [postsynaptischen] Membran und öffnen dort [Ionenkanäle]. Je nach Ioneneinstrom entsteht in der nächsten Zelle ein [Aktionspotenzial] oder nicht." },
+    { name: "Multiple Sklerose", text: "MS ist eine [Autoimmunkrankheit], bei der das Immunsystem die [Myelinscheiden] in Gehirn und Rückenmark angreift. Sie heißt auch „Krankheit der 1000 [Gesichter]“. Ohne Myelin funktioniert die [saltatorische] Erregungsleitung nicht, Signale werden [langsamer] oder gar nicht weitergeleitet. Typische Symptome sind [Sehstörungen], Kribbeln und starke Müdigkeit. Bei der [schubförmigen] Form bilden sich die Symptome wieder zurück. MS ist nicht [heilbar]; bei Schüben hilft [Kortison]." }
+  ];
+
+  // ---------- Helpers ----------
+  var app = document.getElementById("app");
+  var STORE = "biologie-trainer-v1";
+  function load() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } }
+  function save(key, val) { try { var s = load(); s[key] = val; localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) {} }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var I = {
+    back: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
+    chev: '<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+    exam: '<svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/></svg>',
+    sort: '<svg viewBox="0 0 24 24"><path d="M4 6h7M4 12h7M4 18h7M15 8l3-3 3 3M18 5v14"/></svg>',
+    time: '<svg viewBox="0 0 24 24"><path d="M3 12h18"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/></svg>',
+    gap: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h5M15 12h5M4 17h10"/><path d="M10 14h4"/></svg>'
+  };
+  function top(title, count) {
+    return '<div class="top"><button type="button" class="back" data-home>' + I.back + 'Übersicht</button>' +
+      (count ? '<span class="count">' + count + "</span>" : "") + "</div>" +
+      (title ? '<p class="label">' + esc(title) + "</p>" : "");
+  }
+  function bar(done, total) { return '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + done + '"><i style="width:' + (total ? 100 * done / total : 0) + '%"></i></div>'; }
+  function bindHome() { var b = app.querySelector("[data-home]"); if (b) b.onclick = home; }
+  function show(html) { app.innerHTML = html; bindHome(); window.scrollTo(0, 0); }
+
+  // ---------- Home ----------
+  function home() {
+    var st = load();
+    function best(k) { return st[k] ? '<span class="chip">' + st[k] + "</span>" : ""; }
+    var rows = [
+      ["exam", "Prüfungsfragen", "Offene Fragen wie im Test, mit Musterlösung zum Abhaken", best("exam")],
+      ["sort", "Zuordnen", "Krampf oder Lähmung? Stäbchen oder Zapfen? …", best("sort")],
+      ["time", "Abläufe", "Aktionspotenzial, Synapse, Weg des Lichts: in die richtige Reihenfolge", best("time")],
+      ["gap", "Lückentext", "Die Arbeitsblätter zum Ausfüllen", best("gap")]
+    ];
+    show('<div class="intro rise"><h1>Biologie-Trainer</h1><p class="muted small">Neurobiologie für den Test am 25. 11.: die PowerPoints und Arbeitsblätter aus dem Unterricht.</p></div>' +
+      '<ul class="rows">' + rows.map(function (r, n) {
+        return '<li class="rise" style="--i:' + (n + 1) + '"><button type="button" class="row" data-mode="' + r[0] + '"><span class="tile">' + I[r[0]] + '</span>' +
+          '<span class="row-text"><strong>' + r[1] + "</strong><span>" + r[2] + "</span></span>" + r[3] + I.chev + "</button></li>";
+      }).join("") + "</ul>");
+    app.querySelectorAll("[data-mode]").forEach(function (b) {
+      b.onclick = function () { ({ exam: examStart, sort: sortStart, time: timeStart, gap: gapStart })[b.dataset.mode](); };
+    });
+  }
+
+  // ---------- Prüfungsfragen ----------
+  var examFilter = -1;
+  function examStart() {
+    var list = shuffle(EXAM.filter(function (q) { return examFilter < 0 || q[0] === examFilter; }));
+    if (examFilter < 0) list = list.slice(0, 8);
+    var i = 0, got = 0, max = 0;
+    function filters() {
+      return '<div class="filters" role="group" aria-label="Stoffgebiet">' +
+        [["Gemischt (8)", -1]].concat(TOPICS.map(function (t, n) { return [t, n]; })).map(function (f) {
+          return '<button type="button" class="filter" data-f="' + f[1] + '" aria-pressed="' + (examFilter === f[1]) + '">' + esc(f[0]) + "</button>";
+        }).join("") + "</div>";
+    }
+    function draw() {
+      if (i >= list.length) return done();
+      var q = list[i];
+      show(top("Prüfungsfragen", (i + 1) + " von " + list.length) + bar(i, list.length) + (i === 0 ? filters() : "") +
+        '<div class="card rise"><p class="label">' + esc(TOPICS[q[0]]) + "</p><h2>" + esc(q[1]) + "</h2>" +
+        '<textarea id="ans" placeholder="Deine Antwort in Stichworten (freiwillig)" aria-label="Deine Antwort"></textarea>' +
+        '<div id="sol"></div></div><div class="actions"><button type="button" class="btn btn-primary" id="go">Lösung zeigen</button></div>');
+      app.querySelectorAll("[data-f]").forEach(function (b) {
+        b.onclick = function () { examFilter = Number(b.dataset.f); examStart(); };
+      });
+      app.querySelector("#go").onclick = reveal;
+    }
+    function reveal() {
+      var q = list[i];
+      app.querySelector("#sol").innerHTML = '<p class="label" style="margin-top:20px">Musterlösung · tippe an, was du hattest</p><ul class="points">' +
+        q[2].map(function (p, n) { return '<li><label class="point" style="--i:' + n + '"><input type="checkbox"><span>' + esc(p) + "</span></label></li>"; }).join("") + "</ul>";
+      var go = app.querySelector("#go");
+      go.textContent = i + 1 < list.length ? "Weiter" : "Zum Ergebnis";
+      go.onclick = function () {
+        got += app.querySelectorAll(".point input:checked").length; max += q[2].length; i++; draw();
+      };
+    }
+    function done() {
+      save("exam", got + "/" + max);
+      show(top("Prüfungsfragen") + '<div class="card rise"><p class="label">Ergebnis</p><p class="score">' + got + "<span class=\"muted\" style=\"font-size:26px\"> / " + max + "</span></p>" +
+        '<p class="muted small" style="margin-top:8px">Punkte aus der Musterlösung, die du genannt hast. Im Test zählen ganze Sätze mit Begründung.</p></div>' +
+        '<div class="actions"><button type="button" class="btn btn-primary" id="again">Neue Runde</button><button type="button" class="btn btn-secondary" data-home2>Fertig</button></div>');
+      app.querySelector("#again").onclick = examStart;
+      app.querySelector("[data-home2]").onclick = home;
+    }
+    draw();
+  }
+
+  // ---------- Zuordnen ----------
+  function sortStart() {
+    show(top("Zuordnen") + '<ul class="rows">' + SORTS.map(function (s, n) {
+      return '<li class="rise" style="--i:' + n + '"><button type="button" class="row" data-s="' + n + '"><span class="row-text"><strong>' + esc(s.name) + "</strong><span>" + esc(s.sub) + " · " + s.items.length + " Begriffe</span></span>" + I.chev + "</button></li>";
+    }).join("") + "</ul>");
+    app.querySelectorAll("[data-s]").forEach(function (b) { b.onclick = function () { sortRun(SORTS[Number(b.dataset.s)]); }; });
+  }
+  function sortRun(set) {
+    var items = shuffle(set.items), i = 0, right = 0, wrong = [];
+    function draw() {
+      if (i >= items.length) return done();
+      var it = items[i];
+      show(top(set.name, (i + 1) + " von " + items.length) + bar(i, items.length) +
+        '<div class="card item" id="it">' + esc(it[0]) + "</div>" +
+        '<div class="cats">' + set.cats.map(function (c, n) { return '<button type="button" class="cat" data-c="' + n + '">' + esc(c) + "</button>"; }).join("") + "</div>" +
+        '<div id="fb"></div><div class="actions" id="act"></div>');
+      app.querySelectorAll("[data-c]").forEach(function (b) {
+        b.onclick = function () {
+          var pick = Number(b.dataset.c), ok = pick === it[1];
+          app.querySelectorAll("[data-c]").forEach(function (x) { x.disabled = true; });
+          app.querySelector('[data-c="' + it[1] + '"]').classList.add("right");
+          if (!ok) { b.classList.add("wrong"); wrong.push(it); } else right++;
+          app.querySelector("#it").classList.add(ok ? "ok" : "bad");
+          app.querySelector("#fb").innerHTML = '<div class="feedback ' + (ok ? "ok" : "bad") + '"><strong>' + (ok ? "Richtig!" : "Leider falsch.") + "</strong> " +
+            esc(it[0]) + " gehört zu „" + esc(set.cats[it[1]]) + "“.</div>";
+          var act = app.querySelector("#act");
+          act.innerHTML = '<button type="button" class="btn btn-primary">' + (i + 1 < items.length ? "Weiter" : "Zum Ergebnis") + "</button>";
+          var nx = act.firstChild; nx.focus(); nx.onclick = function () { i++; draw(); };
+        };
+      });
+    }
+    function done() {
+      save("sort", right + "/" + items.length);
+      show(top(set.name) + '<div class="card rise"><p class="label">Ergebnis</p><p class="score">' + right + '<span class="muted" style="font-size:26px"> / ' + items.length + "</span></p></div>" +
+        (wrong.length ? '<p class="label" style="margin-top:24px">Noch üben</p><ul class="review">' + wrong.map(function (w) { return "<li><b>" + esc(w[0]) + "</b>" + esc(set.cats[w[1]]) + "</li>"; }).join("") + "</ul>" : "") +
+        '<div class="actions"><button type="button" class="btn btn-primary" id="again">Nochmal</button><button type="button" class="btn btn-secondary" id="other">Anderes Thema</button></div>');
+      app.querySelector("#again").onclick = function () { sortRun(set); };
+      app.querySelector("#other").onclick = sortStart;
+    }
+    draw();
+  }
+
+  // ---------- Abläufe ----------
+  var timeRound = 0, timeRight = 0, seqOrder = [];
+  function timeStart() { timeRound = 0; timeRight = 0; seqOrder = shuffle(SEQS); timeRun(); }
+  function timeRun() {
+    var seq = seqOrder[timeRound % seqOrder.length];
+    var sorted = seq.steps.map(function (t, n) { return [n, (n + 1) + ".", t]; });
+    var round = shuffle(sorted), placed = [], checked = false;
+    function draw() {
+      var pool = round.filter(function (e) { return placed.indexOf(e) < 0; });
+      show(top(seq.name, "Runde " + (timeRound + 1)) +
+        '<p class="small muted" style="margin-bottom:16px">Tippe die Schritte in der richtigen Reihenfolge an. Tippe oben auf einen Schritt, um ihn zurückzulegen.</p>' +
+        '<p class="label">Deine Reihenfolge</p><div class="order" style="margin:8px 0 20px">' +
+        (placed.length ? placed.map(function (e, n) {
+          var cls = checked ? (e === sorted[n] ? " ok" : " bad") : "";
+          return '<button type="button" class="ev' + cls + '" data-p="' + n + '"' + (checked ? " disabled" : "") + '><span class="n">' + (n + 1) + "</span><span>" + esc(e[2]) + "</span>" + (checked ? '<span class="yr">' + esc(e[1]) + "</span>" : "") + "</button>";
+        }).join("") : '<div class="empty">Noch leer</div>') + "</div>" +
+        (pool.length ? '<p class="label">Schritte</p><div class="pool" style="margin-top:8px">' + pool.map(function (e, n) {
+          return '<button type="button" class="ev" style="--i:' + n + '" data-e="' + round.indexOf(e) + '"><span class="n">·</span><span>' + esc(e[2]) + "</span></button>";
+        }).join("") + "</div>" : "") +
+        (checked ? solution() : "") +
+        '<div class="actions">' + (checked
+          ? '<button type="button" class="btn btn-primary" id="next">Neue Runde</button><button type="button" class="btn btn-secondary" data-home2>Fertig</button>'
+          : '<button type="button" class="btn btn-primary" id="check"' + (pool.length ? " disabled" : "") + ">Prüfen</button>") + "</div>");
+      app.querySelectorAll("[data-e]").forEach(function (b) { b.onclick = function () { placed.push(round[Number(b.dataset.e)]); draw(); }; });
+      app.querySelectorAll("[data-p]").forEach(function (b) { b.onclick = function () { placed.splice(Number(b.dataset.p), 1); draw(); }; });
+      var c = app.querySelector("#check"); if (c) c.onclick = function () {
+        checked = true; var ok = placed.every(function (e, n) { return e === sorted[n]; });
+        timeRound++; if (ok) timeRight++; save("time", timeRight + "/" + timeRound); draw();
+      };
+      var nx = app.querySelector("#next"); if (nx) nx.onclick = timeRun;
+      var h2 = app.querySelector("[data-home2]"); if (h2) h2.onclick = home;
+    }
+    function solution() {
+      var ok = placed.every(function (e, n) { return e === sorted[n]; });
+      return '<div class="feedback ' + (ok ? "ok" : "bad") + '"><strong>' + (ok ? "Alles richtig!" : "Nicht ganz.") + "</strong> " +
+        (ok ? "" : "Richtig ist: " + sorted.map(function (e) { return esc(e[2]); }).join(" → ")) + "</div>";
+    }
+    draw();
+  }
+
+  // ---------- Lückentext ----------
+  function gapStart() {
+    var st = load();
+    show(top("Lückentext") + '<ul class="rows">' + GAPS.map(function (g, n) {
+      var k = (g.text.match(/\[/g) || []).length;
+      return '<li class="rise" style="--i:' + n + '"><button type="button" class="row" data-g="' + n + '"><span class="row-text"><strong>' + esc(g.name) + "</strong><span>" + k + " Lücken</span></span>" +
+        (st["gap" + n] ? '<span class="chip">' + st["gap" + n] + "</span>" : "") + I.chev + "</button></li>";
+    }).join("") + "</ul>");
+    app.querySelectorAll("[data-g]").forEach(function (b) { b.onclick = function () { gapRun(Number(b.dataset.g)); }; });
+  }
+  function gapRun(idx) {
+    var g = GAPS[idx], parts = g.text.split(/\[([^\]]+)\]/), answers = [], fill = [], sel = 0, checked = false;
+    for (var p = 1; p < parts.length; p += 2) { answers.push(parts[p]); fill.push(null); }
+    var bank = shuffle(answers.map(function (a, n) { return { w: a, n: n }; }));
+    function draw() {
+      var html = "", k = 0;
+      parts.forEach(function (part, n) {
+        if (n % 2 === 0) { html += esc(part); return; }
+        var f = fill[k], cls = checked ? (f !== null && bank[f].w === answers[k] ? " ok" : " bad") : (k === sel ? " sel" : "");
+        html += '<button type="button" class="gap' + cls + '" data-k="' + k + '" aria-label="Lücke ' + (k + 1) + '">' +
+          (checked && !(f !== null && bank[f].w === answers[k]) ? '<span class="fix">' + esc(answers[k]) + "</span>" : "") +
+          (f !== null ? esc(bank[f].w) : "&nbsp;") + "</button>";
+        k++;
+      });
+      var correct = fill.filter(function (f, n) { return f !== null && bank[f].w === answers[n]; }).length;
+      show(top(g.name) + '<div class="card rise"><p class="gaptext">' + html + "</p></div>" +
+        (checked ? '<div class="feedback ' + (correct === answers.length ? "ok" : "bad") + '"><strong>' + correct + " von " + answers.length + " richtig.</strong> " +
+          (correct === answers.length ? "Sehr gut!" : "Die richtigen Begriffe stehen grün über den falschen Lücken.") + "</div>"
+          : '<div class="bank" role="group" aria-label="Begriffe">' + bank.map(function (b, n) {
+            return '<button type="button" class="word' + (fill.indexOf(n) >= 0 ? " used" : "") + '" data-w="' + n + '">' + esc(b.w) + "</button>";
+          }).join("") + "</div>") +
+        '<div class="actions">' + (checked
+          ? '<button type="button" class="btn btn-primary" id="again">Nochmal</button><button type="button" class="btn btn-secondary" id="other">Anderer Text</button>'
+          : '<button type="button" class="btn btn-primary" id="check"' + (fill.indexOf(null) >= 0 ? " disabled" : "") + ">Prüfen</button>") + "</div>");
+      if (!checked) {
+        app.querySelectorAll("[data-k]").forEach(function (b) {
+          b.onclick = function () { var k2 = Number(b.dataset.k); if (fill[k2] !== null) fill[k2] = null; sel = k2; draw(); };
+        });
+        app.querySelectorAll("[data-w]").forEach(function (b) {
+          b.onclick = function () {
+            if (fill[sel] !== null) sel = fill.indexOf(null);
+            if (sel < 0) return;
+            fill[sel] = Number(b.dataset.w);
+            var next = fill.indexOf(null, sel); sel = next >= 0 ? next : fill.indexOf(null);
+            draw();
+          };
+        });
+        app.querySelector("#check").onclick = function () { checked = true; draw(); save("gap" + idx, correct2() + "/" + answers.length); save("gap", correct2() + "/" + answers.length); };
+      } else {
+        app.querySelector("#again").onclick = function () { gapRun(idx); };
+        app.querySelector("#other").onclick = gapStart;
+      }
+    }
+    function correct2() { return fill.filter(function (f, n) { return f !== null && bank[f].w === answers[n]; }).length; }
+    draw();
+  }
+
+  home();
+})();
+</script>
+</body>
+</html>

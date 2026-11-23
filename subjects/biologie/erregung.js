@@ -1,0 +1,31 @@
+// Biologie 6a, Neurobiologie 2: Ruhepotenzial und Aktionspotenzial (PP 1.1, Folien 8–13; AB 1.1.2 und 1.1.3)
+// Each card: ["Begriff", "Erklärung", "optional note"]
+addTopic({
+  labels: ["Begriff", "Erklärung"],
+  unit: ["Begriff", "Begriffe", "Begriffen"],
+  cards: [
+    ["Ruhepotenzial", "Elektrische Spannung zwischen Innen- und Außenseite einer unerregten Nervenzelle", "ca. –70 mV, innen negativ"],
+    ["Ionenverteilung in Ruhe", "Innen: K⁺ und organische Anionen. Außen: Na⁺ und Cl⁻"],
+    ["Organische Anionen", "Negativ geladene Teilchen im Zellinneren, die nicht durch die Membran können"],
+    ["selektiv permeabel", "Die Membran lässt manche Ionen leichter durch als andere, vor allem K⁺"],
+    ["Warum wird das Zellinnere negativ?", "K⁺ diffundiert durch Kaliumkanäle hinaus; zurück bleiben die negativen Anionen"],
+    ["Elektrochemisches Gleichgewicht", "K⁺ will hinaus (Konzentration), die Ladungsdifferenz zieht es zurück; beides gleicht sich aus"],
+    ["Natrium-Leckstrom", "Wenige Na⁺ gelangen durch Leckkanäle in die Zelle und stören das Ruhepotenzial"],
+    ["Natrium-Kalium-Pumpe", "Transportiert aktiv 3 Na⁺ hinaus und 2 K⁺ hinein; braucht ATP und hält das Ruhepotenzial stabil"],
+    ["ATP", "Energieträger der Zelle; die Natrium-Kalium-Pumpe verbraucht ihn"],
+    ["Energieverbrauch des Gehirns", "Ca. 20 % der Körperenergie gehen an die Natrium-Kalium-Pumpen"],
+    ["Bedeutung des Ruhepotenzials", "Grundlage für Erregbarkeit und Reizweiterleitung"],
+    ["Aktionspotenzial", "Kurzfristige elektrische Spannungsänderung an der Axonmembran"],
+    ["Schwellenwert", "ca. –50 mV; erst ab hier entsteht ein Aktionspotenzial"],
+    ["Alles-oder-Nichts-Prinzip", "Wird der Schwellenwert erreicht, entsteht immer ein vollständiges Aktionspotenzial, sonst gar keines"],
+    ["Depolarisation", "Spannungsabhängige Na⁺-Kanäle öffnen, Na⁺ strömt ein, das Zellinnere wird positiv", "Spitze ca. +30 mV"],
+    ["Repolarisation", "Spannungsabhängige K⁺-Kanäle öffnen verzögert, K⁺ strömt aus, das Potenzial wird wieder negativ"],
+    ["Hyperpolarisation", "Kurzzeitig negativer als das Ruhepotenzial, weil die K⁺-Kanäle länger offen bleiben"],
+    ["Rückkehr zum Ruhepotenzial", "Die Natrium-Kalium-Pumpe stellt die ursprüngliche Ionenverteilung wieder her (3 Na⁺ raus, 2 K⁺ rein)"],
+    ["Refraktärzeit", "Erholungsphase, in der kein neues Aktionspotenzial ausgelöst werden kann", "Verhindert, dass Signale rückwärts laufen oder zu dicht folgen"],
+    ["Richtung der Erregung", "Ein Aktionspotenzial kann sich nur in eine Richtung fortsetzen"],
+    ["Saltatorische Erregungsleitung", "Bei markhaltigen Axonen springt die Erregung von Schnürring zu Schnürring", "Besonders schnell"],
+    ["Geschwindigkeit der Erregungsleitung", "Bis zu 120 m/s"],
+    ["Aufgabe des Aktionspotenzials", "Schnelle und präzise Informationsübertragung; Grundlage für Wahrnehmung, Bewegung und Denken"],
+  ],
+});
